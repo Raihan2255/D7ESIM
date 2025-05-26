@@ -370,50 +370,52 @@ const Teams = () => {
   });
 
   return (
-    <DataGrid
-      table={table}
-      recordCount={filteredData?.length || 0}
-      tableLayout={{
-        columnsPinnable: true,
-        columnsMovable: true,
-        columnsVisibility: true,
-        cellBorder: true,
-      }}
-    >
-      <Card>
-        <CardHeader className="py-3.5">
-          <CardTitle>Teams</CardTitle>
-          <CardToolbar className="relative">
-            <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
-            <Input
-              placeholder="Search Teams..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="ps-9 w-40"
-            />
-            {searchQuery.length > 0 && (
-              <Button
-                mode="icon"
-                variant="ghost"
-                className="absolute end-1.5 top-1/2 -translate-y-1/2 h-6 w-6"
-                onClick={() => setSearchQuery('')}
-              >
-                <X />
-              </Button>
-            )}
-          </CardToolbar>
-        </CardHeader>
-        <CardTable>
-          <ScrollArea>
-            <DataGridTable />
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </CardTable>
-        <CardFooter>
-          <DataGridPagination />
-        </CardFooter>
-      </Card>
-    </DataGrid>
+    <>
+      <DataGrid
+        table={table}
+        recordCount={filteredData?.length || 0}
+        tableLayout={{
+          columnsPinnable: true,
+          columnsMovable: true,
+          columnsVisibility: true,
+          cellBorder: true,
+        }}
+      >
+        <Card>
+          <CardHeader className="py-3.5">
+            <CardTitle>Teams</CardTitle>
+            <CardToolbar className="relative">
+              <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
+              <Input
+                placeholder="Search Teams..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="ps-9 w-40"
+              />
+              {searchQuery.length > 0 && (
+                <Button
+                  mode="icon"
+                  variant="ghost"
+                  className="absolute end-1.5 top-1/2 -translate-y-1/2 h-6 w-6"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X />
+                </Button>
+              )}
+            </CardToolbar>
+          </CardHeader>
+          <CardTable>
+            <ScrollArea>
+              <DataGridTable />
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </CardTable>
+          <CardFooter>
+            <DataGridPagination />
+          </CardFooter>
+        </Card>
+      </DataGrid>
+    </>
   );
 };
 

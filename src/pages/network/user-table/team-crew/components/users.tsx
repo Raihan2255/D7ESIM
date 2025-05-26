@@ -67,15 +67,15 @@ interface IData {
   status: {
     label: string;
     color:
-      | 'secondary'
-      | 'primary'
-      | 'destructive'
-      | 'success'
-      | 'info'
-      | 'mono'
-      | 'warning'
-      | null
-      | undefined;
+    | 'secondary'
+    | 'primary'
+    | 'destructive'
+    | 'success'
+    | 'info'
+    | 'mono'
+    | 'warning'
+    | null
+    | undefined;
   };
   location: string;
   flag: string;
@@ -646,10 +646,10 @@ function ActionsCell({ row }: { row: Row<IData> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end">
-        <DropdownMenuItem onClick={() => {}}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => { }}>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyId}>Copy ID</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={() => {}}>
+        <DropdownMenuItem variant="destructive" onClick={() => { }}>
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -925,6 +925,7 @@ const Users = () => {
         columnsVisibility: true,
         cellBorder: true,
       }}
+
     >
       <Card>
         <CardHeader>

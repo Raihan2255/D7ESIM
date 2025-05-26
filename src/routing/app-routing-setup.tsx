@@ -93,6 +93,8 @@ import {
   WishlistPage,
 } from '@/pages/store-client';
 import { Navigate, Route, Routes } from 'react-router';
+import { PurchaseListing } from "@/pages/purchase"
+import { TopUpListing } from "@/pages/top-up"
 
 export function AppRoutingSetup() {
   return (
@@ -101,6 +103,9 @@ export function AppRoutingSetup() {
         <Route element={<Demo1Layout />}>
           <Route path="/" element={<DefaultPage />} />
           <Route path="/dark-sidebar" element={<Demo1DarkSidebarPage />} />
+          <Route path='/purchase/purchase-listing' element={<PurchaseListing />} />
+          <Route path='/top-up' element={<TopUpListing />} />
+          <Route path='/order-history' element={<TopUpListing />} />
           <Route
             path="/public-profile/profiles/default/"
             element={<ProfileDefaultPage />}
