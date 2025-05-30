@@ -1,4 +1,4 @@
-import { IS_REGISTERED, TOKEN_KEY, USER_INFO } from "@/constants/global";
+import { IS_REGISTERED, REFRESH_TOKEN_KEY, TOKEN_KEY, USER_INFO } from "@/constants/global";
 
 const parse = JSON.parse;
 const stringify = JSON.stringify;
@@ -89,7 +89,9 @@ const auth = {
 	setToken(value = "", isLocalStorage = false, tokenKey = TOKEN_KEY) {
 		return auth.set(value, tokenKey, isLocalStorage);
 	},
-
+	setRefreshToken(value = "", isLocalStorage = false, tokenKey = REFRESH_TOKEN_KEY) {
+		return auth.set(value, tokenKey, isLocalStorage);
+	},
 	setUserInfo(
 		value: string = "",
 		isLocalStorage = false,

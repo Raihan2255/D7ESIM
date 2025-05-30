@@ -37,13 +37,14 @@ export const useApiHandlers = () => {
     data,
     qs,
     successCb,
-    errorCb,
+    // errorCb,
     abortController,
     upload = false,
     requiresAuth = false,
   }: HandlerOptions<T>): Promise<T | any> => {
     const token = auth.get(TOKEN_KEY);
     const BASE_API_URL = import.meta.env.VITE_API_URL + url;
+
     const config: AxiosRequestConfig = {
       url: BASE_API_URL,
       method,

@@ -3,7 +3,7 @@ import { SupabaseAdapter } from '@/auth/adapters/supabase-adapter';
 import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -18,13 +18,20 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinners';
-import { Icons } from '@/components/common/icons';
 import { getSigninSchema, SigninSchemaType } from '../forms/signin-schema';
+import { ILoginErrorResponse, ILoginSuccessResponse } from '@/types/login.types';
+import { enqueueSnackbar } from 'notistack';
+import auth from '@/utils/auth';
+import { USER_INFO } from '@/constants/global';
+import { redirectUrl } from '@/utils/constants';
+import { useApiHandlers } from '@/hooks/useApiHandlers';
+import { API_END_POINTS } from '@/apis/api-constants';
+import { appRoutes } from '@/routes/app-routes';
 
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { create } = useApiHandlers()
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,13 +60,13 @@ export function SignInPage() {
         case 'auth_callback_error':
           setError(
             errorDescription ||
-              'An error occurred during authentication. Please try again.',
+            'An error occurred during authentication. Please try again.',
           );
           break;
         case 'auth_token_error':
           setError(
             errorDescription ||
-              'Failed to set authentication session. Please try again.',
+            'Failed to set authentication session. Please try again.',
           );
           break;
         default:
@@ -80,38 +87,38 @@ export function SignInPage() {
     },
   });
 
-  async function onSubmit(values: SigninSchemaType) {
-    try {
-      setIsProcessing(true);
-      setError(null);
+  // async function onSubmit(values: SigninSchemaType) {
+  //   try {
+  //     setIsProcessing(true);
+  //     setError(null);
 
-      console.log('Attempting to sign in with email:', values.email);
+  //     console.log('Attempting to sign in with email:', values.email);
 
-      // Simple validation
-      if (!values.email.trim() || !values.password) {
-        setError('Email and password are required');
-        return;
-      }
+  //     // Simple validation
+  //     if (!values.email.trim() || !values.password) {
+  //       setError('Email and password are required');
+  //       return;
+  //     }
 
-      // Sign in using the auth context
-      await login(values.email, values.password);
+  //     // Sign in using the auth context
+  //     await login(values.email, values.password);
 
-      // Get the 'next' parameter from URL if it exists
-      const nextPath = searchParams.get('next') || '/';
+  //     // Get the 'next' parameter from URL if it exists
+  //     const nextPath = searchParams.get('next') || '/';
 
-      // Use navigate for navigation
-      navigate(nextPath);
-    } catch (err) {
-      console.error('Unexpected sign-in error:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'An unexpected error occurred. Please try again.',
-      );
-    } finally {
-      setIsProcessing(false);
-    }
-  }
+  //     // Use navigate for navigation
+  //     navigate(nextPath);
+  //   } catch (err) {
+  //     console.error('Unexpected sign-in error:', err);
+  //     setError(
+  //       err instanceof Error
+  //         ? err.message
+  //         : 'An unexpected error occurred. Please try again.',
+  //     );
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // }
 
   // Handle Google Sign In with Supabase OAuth
   const handleGoogleSignIn = async () => {
@@ -144,6 +151,58 @@ export function SignInPage() {
     }
   };
 
+  const onSubmit: SubmitHandler<SigninSchemaType> = async (values) => {
+    setIsProcessing(true);
+    const url = API_END_POINTS?.login?.endPoint;
+
+    // Data to be sent in the API call
+    const data = { email: values?.email, password: values?.password };
+
+    // API call to login
+    const resp = await create<ILoginSuccessResponse | ILoginErrorResponse>(url, data);
+
+    // Handle successful login
+    if (resp?.status && resp?.status_code === 200) {
+      const response = resp as ILoginSuccessResponse;
+
+      // Show a success snackbar
+      enqueueSnackbar(response.message, {
+        variant: "success",
+        autoHideDuration: 4000,
+      });
+
+      if (values.rememberMe) {
+        auth.set(response.data, USER_INFO, true);
+        auth.setToken(response.data?.token, true);
+        auth.setRefreshToken(response.data?.refresh, true);
+      } else {
+        auth.set(response.data, USER_INFO, false);
+        auth.setToken(response.data.token, false);
+        auth.setRefreshToken(response.data?.refresh, false);
+      }
+
+      // Redirect to the dashboard
+      const redirectAfterLogin = localStorage.getItem(redirectUrl);
+
+      // If there is a redirect URL, redirect to that URL
+      if (redirectAfterLogin) {
+        localStorage.removeItem(redirectUrl);
+        const adjustedRedirectUrl = redirectAfterLogin.replace(/^"|"$/g, "");
+
+        navigate(`${adjustedRedirectUrl}`);
+      } else {
+        navigate(`/${appRoutes?.admin}/${appRoutes?.dashboard}`);
+      }
+
+      // Handle error response
+    } else if (!resp?.status && resp?.status_code === 400) {
+      // Handle invalid credentials
+      // setError("email", { type: "manual", message: "Invalid Credentials" });
+      // setError("password", { type: "manual", message: "Invalid Credentials" });
+    }
+    setIsProcessing(false);
+  };
+
   return (
     <Form {...form}>
       <form
@@ -151,13 +210,13 @@ export function SignInPage() {
         className="block w-full space-y-5"
       >
         <div className="text-center space-y-1 pb-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
           <p className="text-sm text-muted-foreground">
             Welcome back! Log in with your credentials.
           </p>
         </div>
 
-        <Alert appearance="light" size="sm" close={false}>
+        {/* <Alert appearance="light" size="sm" close={false}>
           <AlertIcon>
             <AlertCircle className="text-primary" />
           </AlertIcon>
@@ -165,9 +224,9 @@ export function SignInPage() {
             Use <strong>demo@kt.com</strong> username and {` `}
             <strong>demo123</strong> password for demo access.
           </AlertTitle>
-        </Alert>
+        </Alert> */}
 
-        <div className="flex flex-col gap-3.5">
+        {/* <div className="flex flex-col gap-3.5">
           <Button
             variant="outline"
             type="button"
@@ -185,16 +244,16 @@ export function SignInPage() {
               </>
             )}
           </Button>
-        </div>
+        </div> */}
 
-        <div className="relative py-1.5">
+        {/* <div className="relative py-1.5">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">or</span>
           </div>
-        </div>
+        </div> */}
 
         {error && (
           <Alert
@@ -303,7 +362,7 @@ export function SignInPage() {
           )}
         </Button>
 
-        <div className="text-center text-sm text-muted-foreground">
+        {/* <div className="text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
           <Link
             to="/auth/signup"
@@ -311,7 +370,7 @@ export function SignInPage() {
           >
             Sign Up
           </Link>
-        </div>
+        </div> */}
       </form>
     </Form>
   );
