@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StoreClientTopbar } from '@/pages/store-client/components/common/topbar';
-import { SearchDialog } from '@/partials/dialogs/search/search-dialog';
-import { AppsDropdownMenu } from '@/partials/topbar/apps-dropdown-menu';
-import { ChatSheet } from '@/partials/topbar/chat-sheet';
 import { NotificationsSheet } from '@/partials/topbar/notifications-sheet';
 import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
 import {
   Bell,
-  LayoutGrid,
   Menu,
-  MessageCircleMore,
-  Search,
   SquareChevronRight,
 } from 'lucide-react';
 import { useLocation } from 'react-router';
@@ -127,7 +121,7 @@ export function Header() {
             <StoreClientTopbar />
           ) : (
             <>
-              {!mobileMode && (
+              {/* {!mobileMode && (
                 <SearchDialog
                   trigger={
                     <Button
@@ -140,7 +134,7 @@ export function Header() {
                     </Button>
                   }
                 />
-              )}
+              )} */}
               <NotificationsSheet
                 trigger={
                   <Button
@@ -153,7 +147,7 @@ export function Header() {
                   </Button>
                 }
               />
-              <ChatSheet
+              {/* <ChatSheet
                 trigger={
                   <Button
                     variant="ghost"
@@ -176,7 +170,7 @@ export function Header() {
                     <LayoutGrid className="size-4.5!" />
                   </Button>
                 }
-              />
+              /> */}
               <UserDropdownMenu
                 trigger={
                   <img
