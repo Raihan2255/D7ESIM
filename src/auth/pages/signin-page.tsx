@@ -31,6 +31,7 @@ import { appRoutes } from '@/routes/app-routes';
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth()
   const { create } = useApiHandlers()
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -87,38 +88,38 @@ export function SignInPage() {
     },
   });
 
-  // async function onSubmit(values: SigninSchemaType) {
-  //   try {
-  //     setIsProcessing(true);
-  //     setError(null);
+  async function onSubmit(values: SigninSchemaType) {
+    try {
+      setIsProcessing(true);
+      setError(null);
 
-  //     console.log('Attempting to sign in with email:', values.email);
+      console.log('Attempting to sign in with email:', values.email);
 
-  //     // Simple validation
-  //     if (!values.email.trim() || !values.password) {
-  //       setError('Email and password are required');
-  //       return;
-  //     }
+      // Simple validation
+      if (!values.email.trim() || !values.password) {
+        setError('Email and password are required');
+        return;
+      }
 
-  //     // Sign in using the auth context
-  //     await login(values.email, values.password);
+      // Sign in using the auth context
+      await login(values.email, values.password);
 
-  //     // Get the 'next' parameter from URL if it exists
-  //     const nextPath = searchParams.get('next') || '/';
+      // Get the 'next' parameter from URL if it exists
+      const nextPath = searchParams.get('next') || '/';
 
-  //     // Use navigate for navigation
-  //     navigate(nextPath);
-  //   } catch (err) {
-  //     console.error('Unexpected sign-in error:', err);
-  //     setError(
-  //       err instanceof Error
-  //         ? err.message
-  //         : 'An unexpected error occurred. Please try again.',
-  //     );
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // }
+      // Use navigate for navigation
+      navigate(nextPath);
+    } catch (err) {
+      console.error('Unexpected sign-in error:', err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'An unexpected error occurred. Please try again.',
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  }
 
   // Handle Google Sign In with Supabase OAuth
   const handleGoogleSignIn = async () => {
@@ -151,57 +152,57 @@ export function SignInPage() {
     }
   };
 
-  const onSubmit: SubmitHandler<SigninSchemaType> = async (values) => {
-    setIsProcessing(true);
-    const url = API_END_POINTS?.login?.endPoint;
+  // const onSubmit: SubmitHandler<SigninSchemaType> = async (values) => {
+  //   setIsProcessing(true);
+  //   const url = API_END_POINTS?.login?.endPoint;
 
-    // Data to be sent in the API call
-    const data = { email: values?.email, password: values?.password };
+  //   // Data to be sent in the API call
+  //   const data = { email: values?.email, password: values?.password };
 
-    // API call to login
-    const resp = await create<ILoginSuccessResponse | ILoginErrorResponse>(url, data);
+  //   // API call to login
+  //   const resp = await create<ILoginSuccessResponse | ILoginErrorResponse>(url, data);
 
-    // Handle successful login
-    if (resp?.status && resp?.status_code === 200) {
-      const response = resp as ILoginSuccessResponse;
+  //   // Handle successful login
+  //   if (resp?.status && resp?.status_code === 200) {
+  //     const response = resp as ILoginSuccessResponse;
 
-      // Show a success snackbar
-      enqueueSnackbar(response.message, {
-        variant: "success",
-        autoHideDuration: 4000,
-      });
+  //     // Show a success snackbar
+  //     enqueueSnackbar(response.message, {
+  //       variant: "success",
+  //       autoHideDuration: 4000,
+  //     });
 
-      if (values.rememberMe) {
-        auth.set(response.data, USER_INFO, true);
-        auth.setToken(response.data?.token, true);
-        auth.setRefreshToken(response.data?.refresh, true);
-      } else {
-        auth.set(response.data, USER_INFO, false);
-        auth.setToken(response.data.token, false);
-        auth.setRefreshToken(response.data?.refresh, false);
-      }
+  //     if (values.rememberMe) {
+  //       auth.set(response.data, USER_INFO, true);
+  //       auth.setToken(response.data?.token, true);
+  //       auth.setRefreshToken(response.data?.refresh, true);
+  //     } else {
+  //       auth.set(response.data, USER_INFO, false);
+  //       auth.setToken(response.data.token, false);
+  //       auth.setRefreshToken(response.data?.refresh, false);
+  //     }
 
-      // Redirect to the dashboard
-      const redirectAfterLogin = localStorage.getItem(redirectUrl);
+  //     // Redirect to the dashboard
+  //     const redirectAfterLogin = localStorage.getItem(redirectUrl);
 
-      // If there is a redirect URL, redirect to that URL
-      if (redirectAfterLogin) {
-        localStorage.removeItem(redirectUrl);
-        const adjustedRedirectUrl = redirectAfterLogin.replace(/^"|"$/g, "");
+  //     // If there is a redirect URL, redirect to that URL
+  //     if (redirectAfterLogin) {
+  //       localStorage.removeItem(redirectUrl);
+  //       const adjustedRedirectUrl = redirectAfterLogin.replace(/^"|"$/g, "");
 
-        navigate(`${adjustedRedirectUrl}`);
-      } else {
-        navigate(`/${appRoutes?.admin}/${appRoutes?.dashboard}`);
-      }
+  //       navigate(`${adjustedRedirectUrl}`);
+  //     } else {
+  //       navigate(`/${appRoutes?.admin}/${appRoutes?.dashboard}`);
+  //     }
 
-      // Handle error response
-    } else if (!resp?.status && resp?.status_code === 400) {
-      // Handle invalid credentials
-      // setError("email", { type: "manual", message: "Invalid Credentials" });
-      // setError("password", { type: "manual", message: "Invalid Credentials" });
-    }
-    setIsProcessing(false);
-  };
+  //     // Handle error response
+  //   } else if (!resp?.status && resp?.status_code === 400) {
+  //     // Handle invalid credentials
+  //     // setError("email", { type: "manual", message: "Invalid Credentials" });
+  //     // setError("password", { type: "manual", message: "Invalid Credentials" });
+  //   }
+  //   setIsProcessing(false);
+  // };
 
   return (
     <Form {...form}>

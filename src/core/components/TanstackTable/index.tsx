@@ -1,88 +1,28 @@
-'use client';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardFooter, CardHeader, CardHeading, CardTable } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DataGrid } from '@/components/ui/data-grid'
+import { DataGridPagination } from '@/components/ui/data-grid-pagination'
+import { DataGridTable } from '@/components/ui/data-grid-table'
+import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { useApiHandlers } from '@/hooks/useApiHandlers'
+import { Label } from '@radix-ui/react-label'
+import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowSelectionState, SortingState, useReactTable } from '@tanstack/react-table'
+import { Filter, Search, X } from 'lucide-react'
+import { ReactNode, useMemo, useState } from 'react'
+import { useQuery } from 'react-query'
 
-import { useMemo, useState } from 'react';
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-import { RiCheckboxCircleFill } from '@remixicon/react';
-import {
-  ColumnDef,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  PaginationState,
-  Row,
-  RowSelectionState,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
-import { EllipsisVertical, Filter, Search, Settings2, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { toast } from 'sonner';
-import { toAbsoluteUrl } from '@/lib/helpers';
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
-import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
-import { Badge, BadgeDot } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardFooter,
-  CardHeader,
-  CardHeading,
-  CardTable,
-  CardToolbar,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DataGrid, useDataGrid } from '@/components/ui/data-grid';
-import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
-import { DataGridColumnVisibility } from '@/components/ui/data-grid-column-visibility';
-import { DataGridPagination } from '@/components/ui/data-grid-pagination';
-import {
-  DataGridTable,
-  DataGridTableRowSelect,
-  DataGridTableRowSelectAll,
-} from '@/components/ui/data-grid-table';
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-
-interface IData {
-  id: string;
-  user: {
-    avatar: string;
-    userName: string;
-    userGmail: string;
-  };
-  role: string;
-  status: {
-    label: string;
-    color:
-    | 'secondary'
-    | 'primary'
-    | 'destructive'
-    | 'success'
-    | 'info'
-    | 'mono'
-    | 'warning'
-    | null
-    | undefined;
-  };
-  location: string;
-  flag: string;
-  activity: string;
+type Props<T> = {
+  columns: ColumnDef<T>[]
+  queryKey: string
+  url: string
+  children?: ReactNode
 }
 
-const data: IData[] = [
+const data = [
   {
     id: '1',
     user: {
@@ -613,51 +553,7 @@ const data: IData[] = [
   },
 ];
 
-function ActionsCell({ row }: { row: Row<IData> }) {
-  const { copyToClipboard } = useCopyToClipboard();
-  const handleCopyId = () => {
-    copyToClipboard(String(row.original.id));
-    const message = `User ID successfully copied: ${row.original.id}`;
-    toast.custom(
-      (t) => (
-        <Alert
-          variant="mono"
-          icon="success"
-          close={false}
-          onClose={() => toast.dismiss(t)}
-        >
-          <AlertIcon>
-            <RiCheckboxCircleFill />
-          </AlertIcon>
-          <AlertTitle>{message}</AlertTitle>
-        </Alert>
-      ),
-      {
-        position: 'top-center',
-      },
-    );
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button className="size-7" mode="icon" variant="ghost">
-          <EllipsisVertical />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="end">
-        <DropdownMenuItem onClick={() => { }}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyId}>Copy ID</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={() => { }}>
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-const Users = () => {
+export default function TanstackTable<T>({ columns, children, url, queryKey }: Props<T>) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -668,49 +564,54 @@ const Users = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState<string>('latest');
 
-  const filteredData = useMemo(() => {
-    let filtered = data;
+  const { getAll } = useApiHandlers()
+  // const [sortOrder, setSortOrder] = useState<string>('latest');
 
-    // Filter by status
-    if (selectedStatuses.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedStatuses.includes(item.status.label),
-      );
+  const getTableDatas = async () => {
+    try {
+      const params = new URLSearchParams({
+        page: String(pagination.pageIndex + 1),
+        pageSize: String(pagination.pageSize),
+        search: searchQuery ?? '', // we'll fix this in the next step
+        sortBy: sorting[0]?.id ?? '',
+        sortOrder: sorting[0]?.desc ? 'desc' : 'asc',
+      });
+
+      const updatedUrl = `${url}${params}`
+      const response = await getAll(updatedUrl)
+
+    } catch (error) {
+      console.error(error)
     }
+  }
 
-    // Filter by search query (case-insensitive)
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (item) =>
-          item.user.userName.toLowerCase().includes(searchLower) ||
-          item.user.userGmail.toLowerCase().includes(searchLower) ||
-          item.role.toLowerCase().includes(searchLower) ||
-          item.status.label.toLowerCase().includes(searchLower) ||
-          item.location.toLowerCase().includes(searchLower) ||
-          item.activity.toLowerCase().includes(searchLower),
-      );
-    }
+  const { } = useQuery({
+    queryKey: [queryKey, pagination, searchQuery],
+    queryFn: getTableDatas,
+    refetchOnWindowFocus: false
+  })
 
-    // Apply sorting based on sortOrder
-    if (sortOrder === 'latest') {
-      filtered = [...filtered].sort(
-        (a, b) => new Date(b.id).getTime() - new Date(a.id).getTime(),
-      );
-    } else if (sortOrder === 'older') {
-      filtered = [...filtered].sort(
-        (a, b) => new Date(a.id).getTime() - new Date(b.id).getTime(),
-      );
-    } else if (sortOrder === 'oldest') {
-      filtered = [...filtered].sort(
-        (a, b) => new Date(a.id).getTime() - new Date(b.id).getTime(),
-      );
-    }
-
-    return filtered;
-  }, [searchQuery, selectedStatuses, sortOrder]);
+  const table = useReactTable({
+    columns,
+    data: data as T[] ?? [],
+    pageCount: Math.ceil((data?.length || 0) / pagination.pageSize),
+    getRowId: (row: T) => String((row as any)?.id),
+    state: {
+      pagination,
+      sorting,
+      rowSelection,
+    },
+    columnResizeMode: 'onChange',
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   const statusCounts = useMemo(() => {
     return data.reduce(
@@ -729,196 +630,10 @@ const Users = () => {
     );
   };
 
-  const columns = useMemo<ColumnDef<IData>[]>(
-    () => [
-      {
-        accessorKey: 'id',
-        accessorFn: (row) => row.id,
-        header: () => <DataGridTableRowSelectAll />,
-        cell: ({ row }) => <DataGridTableRowSelect row={row} />,
-        enableSorting: false,
-        enableHiding: false,
-        enableResizing: false,
-        size: 51,
-        meta: {
-          cellClassName: '',
-        },
-      },
-      {
-        id: 'users',
-        accessorFn: (row) => row.user,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Member" column={column} />
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-4">
-            <img
-              src={toAbsoluteUrl(`/media/avatars/${row.original.user.avatar}`)}
-              className="rounded-full size-9 shrink-0"
-              alt={`${row.original.user.userName}`}
-            />
-            <div className="flex flex-col gap-0.5">
-              <Link
-                to="#"
-                className="text-sm font-medium text-mono hover:text-primary-active mb-px"
-              >
-                {row.original.user.userName}
-              </Link>
-              <Link
-                to="#"
-                className="text-sm text-secondary-foreground font-normal hover:text-primary-active"
-              >
-                {row.original.user.userGmail}
-              </Link>
-            </div>
-          </div>
-        ),
-        enableSorting: true,
-        size: 300,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'role',
-        accessorFn: (row) => row.role,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Role" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-foreground font-normal">
-            {row.original.role}
-          </span>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'status',
-        accessorFn: (row) => row.status,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Status" column={column} />
-        ),
-        cell: ({ row }) => (
-          <Badge
-            size="lg"
-            variant={row.original.status.color}
-            appearance="outline"
-            shape="circle"
-          >
-            <BadgeDot className={`${row.original.status.color}`} />
-            {row.original.status.label}
-          </Badge>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'location',
-        accessorFn: (row) => row.location,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Location" column={column} />
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center text-foreground font-normal gap-1.5">
-            <img
-              src={toAbsoluteUrl(`/media/flags/${row.original.flag}`)}
-              className="rounded-full size-4 shrink-0"
-              alt={`${row.original.user.userName}`}
-            />
-            {row.original.location}
-          </div>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'activity',
-        accessorFn: (row) => row.activity,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Activity" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-foreground font-normal">
-            {row.original.activity}
-          </span>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) => <ActionsCell row={row} />,
-        enableSorting: false,
-        size: 60,
-        meta: {
-          headerClassName: '',
-        },
-      },
-    ],
-    [],
-  );
-
-  const table = useReactTable({
-    columns,
-    data: filteredData,
-    pageCount: Math.ceil((filteredData?.length || 0) / pagination.pageSize),
-    getRowId: (row: IData) => String(row.id),
-    state: {
-      pagination,
-      sorting,
-      rowSelection,
-    },
-    columnResizeMode: 'onChange',
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
-
-  const Toolbar = () => {
-    const { table } = useDataGrid();
-
-    return (
-      <CardToolbar>
-        <Button>
-          <Settings2 size={16} />
-          Filters
-        </Button>
-        <DataGridColumnVisibility
-          table={table}
-          trigger={
-            <Button variant="outline">
-              <Settings2 />
-              Columns
-            </Button>
-          }
-        />
-      </CardToolbar>
-    );
-  };
-
   return (
     <DataGrid
-      table={table}
-      recordCount={filteredData?.length || 0}
+      table={table as any}
+      recordCount={data?.length || 0}
       tableLayout={{
         columnsPinnable: true,
         columnsMovable: true,
@@ -991,48 +706,9 @@ const Users = () => {
                   </div>
                 </PopoverContent>
               </Popover>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline">
-                    <Filter />
-                    Sort Order
-                    {sortOrder !== 'latest' && (
-                      <Badge size="sm" appearance="stroke">
-                        {sortOrder.charAt(0).toUpperCase() + sortOrder.slice(1)}
-                      </Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-40 p-3" align="start">
-                  <div className="space-y-3">
-                    <div className="text-xs font-medium text-muted-foreground">
-                      Sort By
-                    </div>
-                    <div className="space-y-3">
-                      {['latest', 'older', 'oldest'].map((order) => (
-                        <div key={order} className="flex items-center gap-2.5">
-                          <Checkbox
-                            id={order}
-                            checked={sortOrder === order}
-                            onCheckedChange={(checked) =>
-                              checked && setSortOrder(order)
-                            }
-                          />
-                          <Label
-                            htmlFor={order}
-                            className="grow flex items-center justify-between font-normal gap-1.5"
-                          >
-                            {order.charAt(0).toUpperCase() + order.slice(1)}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
             </div>
           </CardHeading>
-          <Toolbar />
+          <div>{children}</div>
         </CardHeader>
         <CardTable>
           <ScrollArea>
@@ -1045,7 +721,5 @@ const Users = () => {
         </CardFooter>
       </Card>
     </DataGrid>
-  );
-};
-
-export { Users };
+  )
+}

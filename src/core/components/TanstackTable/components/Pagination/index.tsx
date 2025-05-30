@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useDataGrid } from '@/components/ui/data-grid';
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Table } from "@tanstack/react-table";
+import { ReactNode } from "react";
 import {
   Select,
   SelectContent,
@@ -10,9 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 interface DataGridPaginationProps {
+  table: Table<any>
+  recordCount: number
+  isLoading: boolean
   sizes?: number[];
   sizesInfo?: string;
   sizesLabel?: string;
@@ -24,9 +27,7 @@ interface DataGridPaginationProps {
   infoSkeleton?: ReactNode;
 }
 
-function DataGridPagination(props: DataGridPaginationProps) {
-  const { table, recordCount, isLoading } = useDataGrid();
-
+export default function Pagination({ table, recordCount, isLoading, ...props }: DataGridPaginationProps) {
   const defaultProps: Partial<DataGridPaginationProps> = {
     sizes: [5, 10, 25, 50, 100],
     sizesLabel: 'Show',
@@ -38,7 +39,7 @@ function DataGridPagination(props: DataGridPaginationProps) {
     infoSkeleton: <Skeleton className="h-8 w-60" />,
   };
 
-  const mergedProps: DataGridPaginationProps = { ...defaultProps, ...props };
+  const mergedProps: any = { ...defaultProps, ...props };
 
   const btnBaseClasses = 'size-7 p-0 text-sm';
   const btnArrowClasses = btnBaseClasses + ' rtl:transform rtl:rotate-180';
@@ -47,6 +48,8 @@ function DataGridPagination(props: DataGridPaginationProps) {
   const from = pageIndex * pageSize + 1;
   const to = Math.min((pageIndex + 1) * pageSize, recordCount);
   const pageCount = table.getPageCount();
+
+  console.log("pageCount =>>>", pageCount);
 
   // Replace placeholders in paginationInfo
   const paginationInfo = mergedProps?.info
@@ -209,5 +212,3 @@ function DataGridPagination(props: DataGridPaginationProps) {
     </div>
   );
 }
-
-export { DataGridPagination, type DataGridPaginationProps };
