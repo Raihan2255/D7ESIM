@@ -1,5 +1,10 @@
+import { API_END_POINTS } from '@/apis/api-constants';
 import { AuthModel, UserModel } from '@/auth/lib/models';
+import { USER_INFO } from '@/constants/global';
+import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { supabase } from '@/lib/supabase';
+import { ILoginSuccessResponse } from '@/types/login.types';
+import auth from '@/utils/auth';
 
 /**
  * Supabase adapter that maintains the same interface as the existing auth flow
@@ -9,35 +14,35 @@ export const SupabaseAdapter = {
   /**
    * Login with email and password
    */
-  async login(email: string, password: string): Promise<AuthModel> {
-    console.log('SupabaseAdapter: Attempting login with email:', email);
+  async login(email: string, password: string, rememberMe: boolean): Promise<AuthModel> {
+    const { create } = useApiHandlers()
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const url = API_END_POINTS?.login?.endPoint;
+      const payload = { email: email, password: password };
 
-      if (error) {
-        console.error('SupabaseAdapter: Login error from Supabase:', error);
-        throw new Error(error.message);
+      const resp = await create<any>(url, payload);
+      // Handle successful login
+      if (resp?.status && resp?.status_code === 200) {
+        const response = resp as ILoginSuccessResponse;
+        if (rememberMe) {
+          auth.set(response.data, USER_INFO, true);
+          auth.setToken(response.data?.token, true);
+          auth.setRefreshToken(response.data?.refresh, true);
+        } else {
+          auth.set(response.data, USER_INFO, false);
+          auth.setToken(response.data.token, false);
+          auth.setRefreshToken(response.data?.refresh, false);
+        }
+
+        return {
+          access_token: response?.data?.token,
+          refresh_token: response?.data?.refresh
+        };
       }
+      // Handle non-200 response
+      throw new Error('Login failed: Invalid credentials or unexpected response');
 
-      console.log(
-        'SupabaseAdapter: Login successful, session:',
-        data.session
-          ? {
-              access_token_length: data.session.access_token?.length,
-              refresh_token_length: data.session.refresh_token?.length,
-            }
-          : 'No session data',
-      );
-
-      // Transform Supabase session to AuthModel
-      return {
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-      };
     } catch (error) {
       console.error('SupabaseAdapter: Unexpected login error:', error);
       throw error;
@@ -221,7 +226,7 @@ export const SupabaseAdapter = {
 
     // Format data to maintain compatibility with existing UI
     return {
-      id: user.id,
+      // id: user.id,
       email: user.email || '',
       email_verified: user.email_confirmed_at !== null,
       username: metadata.username || '',
@@ -232,7 +237,7 @@ export const SupabaseAdapter = {
         `${metadata.first_name || ''} ${metadata.last_name || ''}`.trim(),
       occupation: metadata.occupation || '',
       company_name: metadata.company_name || '',
-      companyName: metadata.company_name || '', // For backward compatibility
+      // companyName: metadata.company_name || '', 
       phone: metadata.phone || '',
       roles: metadata.roles || [],
       pic: metadata.pic || '',
@@ -254,7 +259,7 @@ export const SupabaseAdapter = {
         userData.fullname ||
         `${userData.first_name || ''} ${userData.last_name || ''}`.trim(),
       occupation: userData.occupation,
-      company_name: userData.company_name || userData.companyName, // Support both formats
+      // company_name: userData.company_name || userData.companyName, 
       phone: userData.phone,
       roles: userData.roles,
       pic: userData.pic,

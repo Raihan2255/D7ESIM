@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { SupabaseAdapter } from '@/auth/adapters/supabase-adapter';
 import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -19,25 +18,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinners';
 import { getSigninSchema, SigninSchemaType } from '../forms/signin-schema';
-import { ILoginErrorResponse, ILoginSuccessResponse } from '@/types/login.types';
-import { enqueueSnackbar } from 'notistack';
-import auth from '@/utils/auth';
-import { USER_INFO } from '@/constants/global';
-import { redirectUrl } from '@/utils/constants';
-import { useApiHandlers } from '@/hooks/useApiHandlers';
-import { API_END_POINTS } from '@/apis/api-constants';
-import { appRoutes } from '@/routes/app-routes';
 
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth()
-  const { create } = useApiHandlers()
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Check for success message from password reset or error messages
   useEffect(() => {
@@ -82,8 +72,8 @@ export function SignInPage() {
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(getSigninSchema()),
     defaultValues: {
-      email: 'demo@kt.com',
-      password: 'demo123',
+      email: '',
+      password: '',
       rememberMe: true,
     },
   });
@@ -92,117 +82,24 @@ export function SignInPage() {
     try {
       setIsProcessing(true);
       setError(null);
-
-      console.log('Attempting to sign in with email:', values.email);
-
-      // Simple validation
       if (!values.email.trim() || !values.password) {
         setError('Email and password are required');
         return;
       }
-
-      // Sign in using the auth context
-      await login(values.email, values.password);
+      await login(values.email, values.password, values?.rememberMe as boolean);
 
       // Get the 'next' parameter from URL if it exists
       const nextPath = searchParams.get('next') || '/';
 
       // Use navigate for navigation
       navigate(nextPath);
-    } catch (err) {
-      console.error('Unexpected sign-in error:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'An unexpected error occurred. Please try again.',
-      );
+    } catch (error) {
+      setIsProcessing(false)
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(false)
     }
   }
 
-  // Handle Google Sign In with Supabase OAuth
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsGoogleLoading(true);
-      setError(null);
-
-      // Get the next path if available
-      const nextPath = searchParams.get('next');
-
-      // Calculate the redirect URL
-      const redirectTo = nextPath
-        ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
-        : `${window.location.origin}/auth/callback`;
-
-      console.log('Initiating Google sign-in with redirect:', redirectTo);
-
-      // Use our adapter to initiate the OAuth flow
-      await SupabaseAdapter.signInWithOAuth('google', { redirectTo });
-
-      // The browser will be redirected automatically
-    } catch (err) {
-      console.error('Google sign-in error:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Failed to sign in with Google. Please try again.',
-      );
-      setIsGoogleLoading(false);
-    }
-  };
-
-  // const onSubmit: SubmitHandler<SigninSchemaType> = async (values) => {
-  //   setIsProcessing(true);
-  //   const url = API_END_POINTS?.login?.endPoint;
-
-  //   // Data to be sent in the API call
-  //   const data = { email: values?.email, password: values?.password };
-
-  //   // API call to login
-  //   const resp = await create<ILoginSuccessResponse | ILoginErrorResponse>(url, data);
-
-  //   // Handle successful login
-  //   if (resp?.status && resp?.status_code === 200) {
-  //     const response = resp as ILoginSuccessResponse;
-
-  //     // Show a success snackbar
-  //     enqueueSnackbar(response.message, {
-  //       variant: "success",
-  //       autoHideDuration: 4000,
-  //     });
-
-  //     if (values.rememberMe) {
-  //       auth.set(response.data, USER_INFO, true);
-  //       auth.setToken(response.data?.token, true);
-  //       auth.setRefreshToken(response.data?.refresh, true);
-  //     } else {
-  //       auth.set(response.data, USER_INFO, false);
-  //       auth.setToken(response.data.token, false);
-  //       auth.setRefreshToken(response.data?.refresh, false);
-  //     }
-
-  //     // Redirect to the dashboard
-  //     const redirectAfterLogin = localStorage.getItem(redirectUrl);
-
-  //     // If there is a redirect URL, redirect to that URL
-  //     if (redirectAfterLogin) {
-  //       localStorage.removeItem(redirectUrl);
-  //       const adjustedRedirectUrl = redirectAfterLogin.replace(/^"|"$/g, "");
-
-  //       navigate(`${adjustedRedirectUrl}`);
-  //     } else {
-  //       navigate(`/${appRoutes?.admin}/${appRoutes?.dashboard}`);
-  //     }
-
-  //     // Handle error response
-  //   } else if (!resp?.status && resp?.status_code === 400) {
-  //     // Handle invalid credentials
-  //     // setError("email", { type: "manual", message: "Invalid Credentials" });
-  //     // setError("password", { type: "manual", message: "Invalid Credentials" });
-  //   }
-  //   setIsProcessing(false);
-  // };
 
   return (
     <Form {...form}>
@@ -211,50 +108,11 @@ export function SignInPage() {
         className="block w-full space-y-5"
       >
         <div className="text-center space-y-1 pb-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
           <p className="text-sm text-muted-foreground">
             Welcome back! Log in with your credentials.
           </p>
         </div>
-
-        {/* <Alert appearance="light" size="sm" close={false}>
-          <AlertIcon>
-            <AlertCircle className="text-primary" />
-          </AlertIcon>
-          <AlertTitle className="text-accent-foreground">
-            Use <strong>demo@kt.com</strong> username and {` `}
-            <strong>demo123</strong> password for demo access.
-          </AlertTitle>
-        </Alert> */}
-
-        {/* <div className="flex flex-col gap-3.5">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={handleGoogleSignIn}
-            disabled={isGoogleLoading}
-          >
-            {isGoogleLoading ? (
-              <span className="flex items-center gap-2">
-                <Spinner className="size-4! animate-spin" /> Signing in with
-                Google...
-              </span>
-            ) : (
-              <>
-                <Icons.googleColorful className="size-5!" /> Sign in with Google
-              </>
-            )}
-          </Button>
-        </div> */}
-
-        {/* <div className="relative py-1.5">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">or</span>
-          </div>
-        </div> */}
 
         {error && (
           <Alert
@@ -283,9 +141,9 @@ export function SignInPage() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email <span className="text-red-500">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="Your email" {...field} />
+                <Input placeholder="Enter your email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -298,7 +156,7 @@ export function SignInPage() {
           render={({ field }) => (
             <FormItem>
               <div className="flex justify-between items-center gap-2.5">
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
               </div>
               <div className="relative">
                 <Input
@@ -363,7 +221,7 @@ export function SignInPage() {
           )}
         </Button>
 
-        {/* <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
           <Link
             to="/auth/signup"
@@ -371,7 +229,7 @@ export function SignInPage() {
           >
             Sign Up
           </Link>
-        </div> */}
+        </div>
       </form>
     </Form>
   );

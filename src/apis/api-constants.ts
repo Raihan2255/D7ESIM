@@ -1,7 +1,9 @@
 import { API_METHODS, IAPIEndpoints } from "@/types/common.types";
 
 export const API_END_POINTS: IAPIEndpoints = {
-  login: { endPoint: "api/accounts/auth/login", method: API_METHODS.POST },
+  login: { endPoint: "api/accounts/admin/login", method: API_METHODS.POST },
+  register: { endPoint: "api/accounts/customers/sign-up", method: API_METHODS.POST },
+  verify: { endPoint: "api/accounts/customers/verify/", method: API_METHODS.GET },
   forgotPassword: {
     endPoint: "api/auth/generate-otp",
     method: API_METHODS.POST,

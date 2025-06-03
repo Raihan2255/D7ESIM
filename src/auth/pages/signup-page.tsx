@@ -18,25 +18,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinners';
 import { getSignupSchema, SignupSchemaType } from '../forms/signup-schema';
+import { useApiHandlers } from '@/hooks/useApiHandlers';
+import { IApiResponse } from '@/types/global.types';
+import { API_END_POINTS } from '@/apis/api-constants';
 
 export function SignUpPage() {
-  const navigate = useNavigate();
-  const { register } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const { create } = useApiHandlers()
 
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(getSignupSchema()),
     defaultValues: {
       email: '',
       password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: '',
-      terms: false,
+      rememberMe: true,
+      first_name: '',
+      last_name: '',
     },
   });
 
@@ -45,14 +47,15 @@ export function SignUpPage() {
       setIsProcessing(true);
       setError(null);
 
+      const response = await create<IApiResponse<any>>(API_END_POINTS.register?.endPoint, values)
       // Register the user with Supabase
-      await register(
-        values.email,
-        values.password,
-        values.confirmPassword,
-        values.firstName,
-        values.lastName,
-      );
+      // await register(
+      //   values.email,
+      //   values.password,
+      //   values.confirmPassword,
+      //   values.firstName,
+      //   values.lastName,
+      // );
 
       // Set success message and metadata
       setSuccessMessage(
@@ -63,9 +66,9 @@ export function SignUpPage() {
       // with additional metadata (firstName, lastName, etc.)
 
       // Optionally redirect to login page after a delay
-      setTimeout(() => {
-        navigate('/auth/signin');
-      }, 3000);
+      // setTimeout(() => {
+      //   navigate('/auth/signin');
+      // }, 3000);
     } catch (err) {
       console.error('Registration error:', err);
       setError(
@@ -115,10 +118,10 @@ export function SignUpPage() {
 
         <FormField
           control={form.control}
-          name="firstName"
+          name="first_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
               <FormControl>
                 <Input placeholder="Enter your first name" {...field} />
               </FormControl>
@@ -129,10 +132,10 @@ export function SignUpPage() {
 
         <FormField
           control={form.control}
-          name="lastName"
+          name="last_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
               <FormControl>
                 <Input placeholder="Enter your last name" {...field} />
               </FormControl>
@@ -146,13 +149,23 @@ export function SignUpPage() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email <span className="text-red-500">*</span></FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Your email address"
-                  type="email"
-                  {...field}
-                />
+                <Input placeholder="Enter your email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone <span className="text-red-500">*</span></FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your phone" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -164,11 +177,13 @@ export function SignUpPage() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <div className="flex justify-between items-center gap-2.5">
+                <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
+              </div>
               <div className="relative">
                 <Input
-                  placeholder="Create a password"
-                  type={passwordVisible ? 'text' : 'password'}
+                  placeholder="Your password"
+                  type={passwordVisible ? 'text' : 'password'} // Toggle input type
                   {...field}
                 />
                 <Button
@@ -179,73 +194,13 @@ export function SignUpPage() {
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 >
                   {passwordVisible ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    <EyeOff className="text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Eye className="text-muted-foreground" />
                   )}
                 </Button>
               </div>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <div className="relative">
-                <Input
-                  placeholder="Confirm your password"
-                  type={confirmPasswordVisible ? 'text' : 'password'}
-                  {...field}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  mode="icon"
-                  onClick={() =>
-                    setConfirmPasswordVisible(!confirmPasswordVisible)
-                  }
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                >
-                  {confirmPasswordVisible ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="terms"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-0.5 space-y-0 rounded-md">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm text-muted-foreground">
-                  I agree to the and{' '}
-                  <Link
-                    to="#"
-                    className="text-sm font-semibold text-foreground hover:text-primary"
-                  >
-                    Privacy Policy
-                  </Link>
-                </FormLabel>
-                <FormMessage />
-              </div>
             </FormItem>
           )}
         />

@@ -11,7 +11,6 @@ import { useSettings } from '@/providers/settings-provider';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/common/container';
 import TanstackTable from '@/core/components/TanstackTable';
-import { NetworkUserTableTeamCrewContent } from '../network/user-table/team-crew';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataGridTableRowSelect, DataGridTableRowSelectAll } from '@/components/ui/data-grid-table';
 import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
@@ -200,8 +199,6 @@ export function PurchaseListing({ }: Props) {
       )}
       <Container>
         <TanstackTable columns={columns} queryKey='' url='' />
-        {/* <NetworkUserTableTeamCrewContent /> */}
-        {/* <DataGridTable /> */}
       </Container>
     </Fragment>
   )
