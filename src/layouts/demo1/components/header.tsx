@@ -24,7 +24,6 @@ import {
 import { Container } from '@/components/common/container';
 import { Breadcrumb } from './breadcrumb';
 import { MegaMenu } from './mega-menu';
-import { MegaMenuMobile } from './mega-menu-mobile';
 import { SidebarMenu } from './sidebar-menu';
 
 export function Header() {
@@ -55,7 +54,7 @@ export function Header() {
         <div className="flex gap-1 lg:hidden items-center gap-2.5">
           <Link to="/" className="shrink-0">
             <img
-              src={toAbsoluteUrl('/media/app/mini-logo.svg')}
+              src={toAbsoluteUrl('/media/app/secondary-logo.png')}
               className="h-[25px] w-full"
               alt="mini-logo"
             />
@@ -83,28 +82,7 @@ export function Header() {
                 </SheetContent>
               </Sheet>
             )}
-            {mobileMode && (
-              <Sheet
-                open={isMegaMenuSheetOpen}
-                onOpenChange={setIsMegaMenuSheetOpen}
-              >
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="sm" mode="icon">
-                    <SquareChevronRight className="text-muted-foreground/70" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent
-                  className="p-0 gap-0 w-[275px]"
-                  side="left"
-                  close={false}
-                >
-                  <SheetHeader className="p-0 space-y-0" />
-                  <SheetBody className="p-0 overflow-y-auto">
-                    <MegaMenuMobile />
-                  </SheetBody>
-                </SheetContent>
-              </Sheet>
-            )}
+
           </div>
         </div>
 

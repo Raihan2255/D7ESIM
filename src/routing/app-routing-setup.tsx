@@ -95,8 +95,13 @@ import {
 import { Navigate, Route, Routes } from 'react-router';
 import { PurchaseListing } from "@/pages/purchase"
 import { TopUpListing } from "@/pages/top-up"
+import Payment from '@/pages/Payment';
+import CompletePage from '@/pages/CompletePage';
 
 export function AppRoutingSetup() {
+
+
+
   return (
     <Routes>
       <Route element={<RequireAuth />}>
@@ -106,6 +111,9 @@ export function AppRoutingSetup() {
           <Route path='/purchase/purchase-listing' element={<PurchaseListing />} />
           <Route path='/top-up' element={<TopUpListing />} />
           <Route path='/order-history' element={<TopUpListing />} />
+          <Route path='/payment' element={<Payment />} />
+          <Route path='/payment-success' element={<CompletePage />} />
+
           <Route
             path="/public-profile/profiles/default/"
             element={<ProfileDefaultPage />}
