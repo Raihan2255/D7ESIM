@@ -3,6 +3,9 @@ import { useAuth } from '@/auth/context/auth-context';
 import { useLocation } from 'react-router';
 import { useLoadingBar } from 'react-top-loading-bar';
 import { AppRoutingSetup } from './app-routing-setup';
+import { TOKEN_KEY } from '@/constants/global';
+import auth from '@/utils/auth';
+import { getDecryptedToken } from '@/utils/cookies';
 
 export function AppRouting() {
   const { start, complete } = useLoadingBar({
@@ -18,6 +21,16 @@ export function AppRouting() {
   const [firstLoad, setFirstLoad] = useState(true);
   const location = useLocation();
   const path = location.pathname.trim();
+
+  const token = auth.getToken(TOKEN_KEY)
+
+  useEffect(() => {
+    if (!token) {
+      const newToken = getDecryptedToken()
+      auth.setToken(newToken as string, true)
+    }
+  }, [token])
+
 
   useEffect(() => {
     if (firstLoad) {

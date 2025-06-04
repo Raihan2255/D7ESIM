@@ -7,6 +7,7 @@ import { IApiResponse } from '@/types/global.types';
 import { ILoginSuccessResponse } from '@/types/login.types';
 import auth from '@/utils/auth';
 import { LOGIN_URL } from '@/utils/constants';
+import { setEncryptedToken } from '@/utils/cookies';
 import { useNavigate } from 'react-router';
 
 /**
@@ -28,6 +29,7 @@ export const SupabaseAdapter = {
       // Handle successful login
       if (resp?.status && resp?.status_code === 200) {
         const response = resp as ILoginSuccessResponse;
+        setEncryptedToken(response?.data?.token)
         if (rememberMe) {
           auth.set(response.data, USER_INFO, true);
           auth.setToken(response.data?.token, true);
