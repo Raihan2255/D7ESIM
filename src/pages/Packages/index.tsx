@@ -20,7 +20,7 @@ type Props = {}
 
 export default function Packages({ }: Props) {
 
-  const { id, country, currency } = useParams()
+  const { id, country } = useParams()
   const navigate = useNavigate()
 
   const columns = useMemo<ColumnDef<TPackage>[]>(

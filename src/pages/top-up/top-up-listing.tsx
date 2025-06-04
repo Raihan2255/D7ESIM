@@ -2,13 +2,9 @@
 import { Fragment, useMemo } from 'react';
 import {
   Toolbar,
-  ToolbarActions,
-  ToolbarDescription,
   ToolbarHeading,
   ToolbarPageTitle,
 } from '@/partials/common/toolbar';
-import { useSettings } from '@/providers/settings-provider';
-import { Button } from '@/components/ui/button';
 import { Container } from '@/components/common/container';
 import TanstackTable from '@/core/components/TanstackTable';
 import { ColumnDef } from '@tanstack/react-table';
@@ -21,7 +17,6 @@ import { Badge, BadgeDot } from '@/components/ui/badge';
 type Props = {}
 
 export function TopUpListing({ }: Props) {
-  const { settings } = useSettings();
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [

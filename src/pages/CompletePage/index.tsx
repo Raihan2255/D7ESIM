@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useStripe,
 } from "@stripe/react-stripe-js";
@@ -60,6 +60,9 @@ export default function CompletePage() {
 
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+
+  console.log(intentId);
+
 
   const packageId = searchParams.get("package_id")
 
