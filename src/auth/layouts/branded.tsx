@@ -36,16 +36,11 @@ export function BrandedLayout() {
 
             <div className="flex flex-col gap-3">
               <h3 className="text-2xl font-semibold text-mono">
-                Secure Dashboard Access
+                Welcome to Your Dashboard
               </h3>
               <div className="text-base font-medium text-secondary-foreground">
-                A robust authentication gateway ensuring
-                <br /> secure&nbsp;
-                <span className="text-mono font-semibold">
-                  efficient user access
-                </span>
-                &nbsp;to the Metronic
-                <br /> Dashboard interface.
+                Get a quick overview of your account,<br /> recent activity, and personalized insights—all in one place.
+
               </div>
             </div>
           </div>

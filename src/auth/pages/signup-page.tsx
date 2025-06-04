@@ -21,6 +21,7 @@ import { getSignupSchema, SignupSchemaType } from '../forms/signup-schema';
 import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { IApiResponse } from '@/types/global.types';
 import { API_END_POINTS } from '@/apis/api-constants';
+import { appRoutes } from '@/routes/app-routes';
 
 export function SignUpPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -48,6 +49,10 @@ export function SignUpPage() {
       setError(null);
 
       const response = await create<IApiResponse<any>>(API_END_POINTS.register?.endPoint, values)
+      if (response?.status) {
+        // Use navigate for navigation
+        navigate(appRoutes.verify);
+      }
       // Register the user with Supabase
       // await register(
       //   values.email,
