@@ -27,7 +27,7 @@ export default function Payment({ }: Props) {
         amount: Number(amount),
         currency: "usd"
       }
-      const response = await create<IApiResponse<{ clientSecretsage: string }>>(APP_APIS.payment, data)
+      const response = await create<IApiResponse<{ clientSecretsage: string }>>(APP_APIS.payment, data, { requiresAuth: true })
       if (response?.data && response?.status) {
         localStorage.setItem("key", response?.data?.clientSecretsage)
         setSecretKey(response?.data?.clientSecretsage)
