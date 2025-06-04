@@ -3,7 +3,6 @@ import { Card, CardFooter, CardHeader, CardHeading, CardTable } from '@/componen
 import { DataGrid } from '@/components/ui/data-grid'
 import { DataGridPagination } from '@/components/ui/data-grid-pagination'
 import { DataGridTable } from '@/components/ui/data-grid-table'
-import { Input } from '@/components/ui/input'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { useApiHandlers } from '@/hooks/useApiHandlers'
 import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowSelectionState, SortingState, useReactTable } from '@tanstack/react-table'
@@ -12,6 +11,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { PaginationResponse } from './types'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router'
+import DebouncedSearchInput from './components/DebouncedSearchInput'
 
 type Props<T> = {
   columns: ColumnDef<T>[]
@@ -181,12 +181,7 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
-                <Input
-                  placeholder="Search Users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="ps-9 w-40"
-                />
+                <DebouncedSearchInput onChange={(value) => setSearchQuery(value)} value={searchQuery} />
                 {searchQuery.length > 0 && (
                   <Button
                     mode="icon"

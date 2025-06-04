@@ -125,7 +125,7 @@ export default function CompletePage() {
         package: packageId,
         transaction: transactionId
       }
-      const response = await create<IApiResponse<any>>(APP_APIS.packagePurchase, payload)
+      const response = await create<IApiResponse<any>>(APP_APIS.packagePurchase, payload, { requiresAuth: true })
       if (response?.data && response?.status) {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.orderHistory] })
 

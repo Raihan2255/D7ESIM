@@ -8,7 +8,6 @@ import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header'
 import { QUERY_KEYS } from '@/constants/query-keys'
 import { APP_APIS } from '@/core/apis'
 import { TPackage } from './types'
-import { Badge, BadgeDot } from '@/components/ui/badge'
 import { useNavigate, useParams } from 'react-router'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
@@ -43,7 +42,7 @@ export default function Packages({ }: Props) {
         header: ({ column }) => (
           <DataGridColumnHeader title="Validity" column={column} />
         ),
-        cell: ({ row }) => <>{row?.original?.validity_period + " " + row?.original?.validity}</>,
+        cell: ({ row }) => <>{row?.original?.validity + " " + row?.original?.validity_period}</>,
         enableSorting: true,
         size: 100,
         meta: {
@@ -62,40 +61,28 @@ export default function Packages({ }: Props) {
           headerClassName: '',
         },
       },
-      {
-        id: 'type',
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Type" column={column} />
-        ),
-        accessorFn: (row) => row.type,
-        enableSorting: true,
-        size: 100,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'status',
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Status" column={column} />
-        ),
-        cell: ({ row }) => (
-          <Badge
-            size="lg"
-            variant={row.original.is_active ? "success" : "warning"}
-            appearance="outline"
-            shape="circle"
-          >
-            <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
-            {row.original.is_active ? "Active" : "In Active"}
-          </Badge>
-        ),
-        enableSorting: true,
-        size: 100,
-        meta: {
-          headerClassName: '',
-        },
-      },
+      // {
+      //   id: 'status',
+      //   header: ({ column }) => (
+      //     <DataGridColumnHeader title="Status" column={column} />
+      //   ),
+      //   cell: ({ row }) => (
+      //     <Badge
+      //       size="lg"
+      //       variant={row.original.is_active ? "success" : "warning"}
+      //       appearance="outline"
+      //       shape="circle"
+      //     >
+      //       <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
+      //       {row.original.is_active ? "Active" : "In Active"}
+      //     </Badge>
+      //   ),
+      //   enableSorting: true,
+      //   size: 100,
+      //   meta: {
+      //     headerClassName: '',
+      //   },
+      // },
       {
         id: 'actions',
         header: ({ column }) => (

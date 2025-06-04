@@ -7,7 +7,6 @@ import TanstackTable from '@/core/components/TanstackTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
 import { useNavigate } from 'react-router';
-import { Badge, BadgeDot } from '@/components/ui/badge';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { APP_APIS } from '@/core/apis';
 import { TCountry } from './types';
@@ -29,66 +28,46 @@ export function PurchaseListing({ }: Props) {
         header: ({ column }) => (
           <DataGridColumnHeader title="Country Name" column={column} />
         ),
+        cell: ({ row }) => (
+          <div className='flex items-center gap-[10px]'>
+            <img
+              className="rounded-[6px] object-cover size-9 shrink-0"
+              src={row?.original?.logo} alt={row?.original?.name} title={row?.original?.name} loading='lazy' />
+            <span>{row?.original?.name}</span>
+          </div>
+        ),
         enableSorting: true,
         size: 180,
         meta: {
           headerClassName: '',
         },
       },
-      {
-        id: 'code',
-        accessorFn: (row) => row.code,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Country Code" column={column} />
-        ),
-        enableSorting: true,
-        size: 130,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'logo',
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Country Logo" column={column} />
-        ),
-        cell: ({ row }) => (
-          <img
-            className="rounded-[6px] object-cover size-9 shrink-0"
-            src={row?.original?.logo} alt={row?.original?.name} title={row?.original?.name} loading='lazy' />
-        ),
-        enableSorting: true,
-        size: 130,
-        meta: {
-          headerClassName: '',
-        },
-      },
+      // {
+      //   id: 'status',
+      //   header: ({ column }) => (
+      //     <DataGridColumnHeader title="Status" column={column} />
+      //   ),
+      //   cell: ({ row }) => (
+      //     <Badge
+      //       size="lg"
+      //       variant={row.original.is_active ? "success" : "warning"}
+      //       appearance="outline"
+      //       shape="circle"
+      //     >
+      //       <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
+      //       {row.original.is_active ? "Active" : "In Active"}
+      //     </Badge>
+      //   ),
+      //   enableSorting: true,
+      //   size: 150,
+      //   meta: {
+      //     headerClassName: '',
+      //   },
+      // },
       {
         id: 'status',
         header: ({ column }) => (
-          <DataGridColumnHeader title="Status" column={column} />
-        ),
-        cell: ({ row }) => (
-          <Badge
-            size="lg"
-            variant={row.original.is_active ? "success" : "warning"}
-            appearance="outline"
-            shape="circle"
-          >
-            <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
-            {row.original.is_active ? "Active" : "In Active"}
-          </Badge>
-        ),
-        enableSorting: true,
-        size: 150,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'status',
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Status" column={column} />
+          <DataGridColumnHeader title="Browse Packages" column={column} />
         ),
         cell: ({ row }) => (
           <Tooltip>
@@ -98,7 +77,7 @@ export function PurchaseListing({ }: Props) {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>View Packages</p>
+              <p>Browse Packages</p>
             </TooltipContent>
           </Tooltip>
         ),

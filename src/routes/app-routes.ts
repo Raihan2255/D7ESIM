@@ -5,5 +5,6 @@ export const appRoutes = {
   topUp: '/top-up',
   orderHistory: '/order-history',
   payment: '/payment',
-  paymentSuccess: '/payment-success'
+  paymentSuccess: '/payment-success',
+  verify: '/auth/verify'
 }

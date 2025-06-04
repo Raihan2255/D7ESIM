@@ -5,7 +5,6 @@ import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
 import {
   Bell,
   Menu,
-  SquareChevronRight,
 } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -28,7 +27,7 @@ import { SidebarMenu } from './sidebar-menu';
 
 export function Header() {
   const [isSidebarSheetOpen, setIsSidebarSheetOpen] = useState(false);
-  const [isMegaMenuSheetOpen, setIsMegaMenuSheetOpen] = useState(false);
+  const [_, setIsMegaMenuSheetOpen] = useState(false);
 
   const { pathname } = useLocation();
   const mobileMode = useIsMobile();

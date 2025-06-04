@@ -86,7 +86,7 @@ export function SignInPage() {
         setError('Email and password are required');
         return;
       }
-      await login(values.email, values.password, values?.rememberMe as boolean);
+      await login(values.email, values.password, values?.rememberMe as boolean, setError);
 
       // Get the 'next' parameter from URL if it exists
       const nextPath = searchParams.get('next') || '/';

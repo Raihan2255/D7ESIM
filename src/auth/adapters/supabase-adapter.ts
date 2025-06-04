@@ -17,7 +17,7 @@ export const SupabaseAdapter = {
   /**
    * Login with email and password
    */
-  async login(email: string, password: string, rememberMe: boolean): Promise<AuthModel> {
+  async login(email: string, password: string, rememberMe: boolean, setError: React.Dispatch<React.SetStateAction<string | null>>): Promise<AuthModel> {
     const { create } = useApiHandlers()
 
     try {

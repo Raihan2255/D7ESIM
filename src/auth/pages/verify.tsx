@@ -4,6 +4,7 @@ import { useApiHandlers } from "@/hooks/useApiHandlers";
 import { IApiResponse } from "@/types/global.types";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router";
+import { toast } from "sonner";
 
 type Props = {}
 
@@ -18,9 +19,16 @@ export function Verify({ }: Props) {
 
   const getDatas = async () => {
     try {
-      const response = await getAll<IApiResponse<any>>(`${API_END_POINTS.verify.endPoint}?uid=${uid}&token=${token}`)
+      const response = await getAll<IApiResponse<any>>(`${API_END_POINTS.verify.endPoint}`)
+      if (!response?.status) {
+        toast.error(response?.message)
+      }
       if (response?.data && response?.status) {
         navigate("/")
+        toast.success("Email verified successfully!", {
+          description: "Your email has been successfully verified. Welcome aboard!",
+          duration: 5000,
+        })
       }
     } catch (error) {
       console.error(error)
