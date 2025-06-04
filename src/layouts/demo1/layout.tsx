@@ -65,11 +65,9 @@ export function Demo1Layout() {
       <div className="wrapper flex grow flex-col">
         <Header />
 
-        <main className="grow pt-5" role="content">
+        <main className="grow pt-5 pb-5" role="content">
           <Outlet />
         </main>
-
-        <Footer />
       </div>
     </>
   );

@@ -16,28 +16,32 @@ export default function Payment({ }: Props) {
 
   const [secretKey, setSecretKey] = useState<string>("")
   const [searchParams] = useSearchParams()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const { create } = useApiHandlers()
 
-  const handlePay = async (amount: string, currency: string) => {
+  const handlePay = async (amount: string) => {
     try {
+      setIsLoading(true)
       const data = {
         amount: Number(amount),
-        currency: currency
+        currency: "usd"
       }
       const response = await create<IApiResponse<{ clientSecretsage: string }>>(APP_APIS.payment, data)
       if (response?.data && response?.status) {
         localStorage.setItem("key", response?.data?.clientSecretsage)
         setSecretKey(response?.data?.clientSecretsage)
+        setIsLoading(false)
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
 
   const amount = searchParams.get("amount")
-  const currency = searchParams.get("currency")
   const paymentIntent = searchParams.get("payment_intent")
 
   // Fetch from localStorage on mount if nothing is in state
@@ -51,10 +55,10 @@ export default function Payment({ }: Props) {
 
 
   useEffect(() => {
-    if (amount && currency) {
-      handlePay(amount as string, currency as string)
+    if (amount) {
+      handlePay(amount as string)
     }
-  }, [amount, currency])
+  }, [amount])
 
   const appearance = {
     theme: 'stripe' as 'stripe',
@@ -69,7 +73,7 @@ export default function Payment({ }: Props) {
         secretKey && (
           <Elements options={{ clientSecret: secretKey, appearance, loader }} stripe={stripePromise}>
             {
-              secretKey && paymentIntent ? <CompletePage /> : <PaymentForm clientSecret={secretKey} />
+              secretKey && paymentIntent ? <CompletePage /> : <PaymentForm isLoading={isLoading} clientSecret={secretKey} />
             }
           </Elements>
         )

@@ -18,9 +18,10 @@ type Props<T> = {
   queryKey: string
   url: string
   children?: ReactNode
+  extraParams?: Record<string, string | number | boolean | null | undefined>
 }
 
-export default function TanstackTable<T>({ columns, children, url, queryKey }: Props<T>) {
+export default function TanstackTable<T>({ columns, children, url, queryKey, extraParams }: Props<T>) {
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -55,6 +56,15 @@ export default function TanstackTable<T>({ columns, children, url, queryKey }: P
       if (sorting[0]?.id) {
         params.append('sortBy', sorting[0].id);
         params.append('sortOrder', sorting[0].desc ? 'desc' : 'asc');
+      }
+
+      // Add extraParams if provided
+      if (extraParams) {
+        Object.entries(extraParams).forEach(([key, value]) => {
+          if (value !== null && value !== undefined) {
+            params.set(key, String(value));
+          }
+        });
       }
 
       const updatedUrl = `${url}?${params.toString()}`
@@ -139,11 +149,19 @@ export default function TanstackTable<T>({ columns, children, url, queryKey }: P
     const currentSearch = searchParams.toString();
     const newSearch = params.toString();
 
+    if (extraParams) {
+      Object.entries(extraParams).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          params.set(key, String(value));
+        }
+      });
+    }
+
     // Only navigate if the URL params are different
     if (currentSearch !== newSearch) {
       navigate({ search: newSearch }, { replace: true });
     }
-  }, [pagination, searchQuery, sorting]);
+  }, [pagination, searchQuery, sorting, extraParams]);
 
 
   return (

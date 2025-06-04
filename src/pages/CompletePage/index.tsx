@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import {
   useStripe,
 } from "@stripe/react-stripe-js";
+import { useApiHandlers } from "@/hooks/useApiHandlers";
+import { APP_APIS } from "@/core/apis";
+import { useNavigate, useSearchParams } from "react-router";
+import { IApiResponse } from "@/types/global.types";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/constants/query-keys";
 
 
 const SuccessIcon =
@@ -49,6 +55,33 @@ export default function CompletePage() {
 
   const [status, setStatus] = useState("default");
   const [intentId, setIntentId] = useState<any>();
+  const { create } = useApiHandlers()
+  const [searchParams] = useSearchParams()
+
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const packageId = searchParams.get("package_id")
+
+  const handlePaymentSuccess = async (packageId: string, transactionId: string) => {
+    try {
+      const payload = {
+        package: packageId,
+        transaction: transactionId
+      }
+      const response = await create<IApiResponse<any>>(APP_APIS.packagePurchase, payload)
+      if (response?.data && response?.status) {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.orderHistory] })
+        // Delay navigation for 3 seconds (3000 ms)
+        setTimeout(() => {
+          navigate('/order-history');
+        }, 3000);
+      }
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     if (!stripe) {
@@ -67,12 +100,18 @@ export default function CompletePage() {
       if (!paymentIntent) {
         return;
       }
+      if (packageId && paymentIntent?.id) {
+        handlePaymentSuccess(packageId as string, paymentIntent?.id)
+      }
 
       setStatus(paymentIntent.status);
       setIntentId(paymentIntent.id);
       localStorage.removeItem("key")
     });
   }, [stripe]);
+
+
+
 
   return (
     <div id="payment-status" className="grid place-items-center">

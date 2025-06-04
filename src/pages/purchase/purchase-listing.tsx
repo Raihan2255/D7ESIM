@@ -2,158 +2,108 @@
 import { useMemo } from 'react';
 import { ToolbarHeading } from '@/layouts/demo1/components/toolbar'
 import { Toolbar } from '@/partials/common/toolbar'
-import { useSettings } from '@/providers/settings-provider';
 import { Container } from '@/components/common/container';
 import TanstackTable from '@/core/components/TanstackTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { DataGridTableRowSelect, DataGridTableRowSelectAll } from '@/components/ui/data-grid-table';
 import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
-import { toAbsoluteUrl } from '@/lib/helpers';
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Badge, BadgeDot } from '@/components/ui/badge';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { APP_APIS } from '@/core/apis';
+import { TCountry } from './types';
+import { Button } from '@/components/ui/button';
+import { Eye } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type Props = {}
 
 export function PurchaseListing({ }: Props) {
-  const { settings } = useSettings();
 
-  const columns = useMemo<ColumnDef<any>[]>(
+  const navigate = useNavigate()
+
+  const columns = useMemo<ColumnDef<TCountry>[]>(
     () => [
       {
-        accessorKey: 'id',
-        accessorFn: (row) => row.id,
-        header: () => <DataGridTableRowSelectAll />,
-        cell: ({ row }) => <DataGridTableRowSelect row={row} />,
-        enableSorting: false,
-        enableHiding: false,
-        enableResizing: false,
-        size: 51,
-        meta: {
-          cellClassName: '',
-        },
-      },
-      {
-        id: 'users',
-        accessorFn: (row) => row.user,
+        id: 'country_name',
+        accessorFn: (row) => row.name,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Member" column={column} />
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-4">
-            <img
-              src={toAbsoluteUrl(`/media/avatars/${row.original.user.avatar}`)}
-              className="rounded-full size-9 shrink-0"
-              alt={`${row.original.user.userName}`}
-            />
-            <div className="flex flex-col gap-0.5">
-              <Link
-                to="#"
-                className="text-sm font-medium text-mono hover:text-primary-active mb-px"
-              >
-                {row.original.user.userName}
-              </Link>
-              <Link
-                to="#"
-                className="text-sm text-secondary-foreground font-normal hover:text-primary-active"
-              >
-                {row.original.user.userGmail}
-              </Link>
-            </div>
-          </div>
+          <DataGridColumnHeader title="Country Name" column={column} />
         ),
         enableSorting: true,
-        size: 300,
+        size: 180,
         meta: {
           headerClassName: '',
         },
       },
       {
-        id: 'role',
-        accessorFn: (row) => row.role,
+        id: 'code',
+        accessorFn: (row) => row.code,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Role" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-foreground font-normal">
-            {row.original.role}
-          </span>
+          <DataGridColumnHeader title="Country Code" column={column} />
         ),
         enableSorting: true,
-        size: 180,
+        size: 130,
+        meta: {
+          headerClassName: '',
+        },
+      },
+      {
+        id: 'logo',
+        header: ({ column }) => (
+          <DataGridColumnHeader title="Country Logo" column={column} />
+        ),
+        cell: ({ row }) => (
+          <img
+            className="rounded-[6px] object-cover size-9 shrink-0"
+            src={row?.original?.logo} alt={row?.original?.name} title={row?.original?.name} loading='lazy' />
+        ),
+        enableSorting: true,
+        size: 130,
         meta: {
           headerClassName: '',
         },
       },
       {
         id: 'status',
-        accessorFn: (row) => row.status,
         header: ({ column }) => (
           <DataGridColumnHeader title="Status" column={column} />
         ),
         cell: ({ row }) => (
           <Badge
             size="lg"
-            variant={row.original.status.color}
+            variant={row.original.is_active ? "success" : "warning"}
             appearance="outline"
             shape="circle"
           >
-            <BadgeDot className={`${row.original.status.color}`} />
-            {row.original.status.label}
+            <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
+            {row.original.is_active ? "Active" : "In Active"}
           </Badge>
         ),
         enableSorting: true,
-        size: 180,
+        size: 150,
         meta: {
           headerClassName: '',
         },
       },
       {
-        id: 'location',
-        accessorFn: (row) => row.location,
+        id: 'status',
         header: ({ column }) => (
-          <DataGridColumnHeader title="Location" column={column} />
+          <DataGridColumnHeader title="Status" column={column} />
         ),
         cell: ({ row }) => (
-          <div className="flex items-center text-foreground font-normal gap-1.5">
-            <img
-              src={toAbsoluteUrl(`/media/flags/${row.original.flag}`)}
-              className="rounded-full size-4 shrink-0"
-              alt={`${row.original.user.userName}`}
-            />
-            {row.original.location}
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={() => navigate(`${row.original.slug}/${row?.original?.name}`)} variant="outline" className='border-none size-[30px] rounded-full'>
+                <Eye />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>View Packages</p>
+            </TooltipContent>
+          </Tooltip>
         ),
         enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'activity',
-        accessorFn: (row) => row.activity,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Activity" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-foreground font-normal">
-            {row.original.activity}
-          </span>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: {
-          headerClassName: '',
-        },
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) => <></>,
-        enableSorting: false,
-        size: 60,
+        size: 150,
         meta: {
           headerClassName: '',
         },
@@ -174,8 +124,8 @@ export function PurchaseListing({ }: Props) {
       <Container>
         <TanstackTable
           columns={columns}
-          queryKey={QUERY_KEYS.purchase}
-          url={APP_APIS.purchase}
+          queryKey={QUERY_KEYS.countries}
+          url={APP_APIS.country}
         />
       </Container>
     </>

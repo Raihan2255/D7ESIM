@@ -1,42 +1,31 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import {
   Toolbar,
-  ToolbarActions,
   ToolbarHeading,
 } from '@/layouts/demo1/components/toolbar';
-import { addDays, format } from 'date-fns';
-import { CalendarDays } from 'lucide-react';
-import { DateRange } from 'react-day-picker';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+
 import { Container } from '@/components/common/container';
-import { Demo1LightSidebarContent } from './';
 
 export function Demo1LightSidebarPage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2025, 0, 20),
-    to: addDays(new Date(2025, 0, 20), 20),
-  });
-  const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(
-    date,
-  );
+  // const [isOpen, setIsOpen] = useState(false);
+  // const [date, setDate] = useState<DateRange | undefined>({
+  //   from: new Date(2025, 0, 20),
+  //   to: addDays(new Date(2025, 0, 20), 20),
+  // });
+  // const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(
+  //   date,
+  // );
 
-  const handleDateRangeApply = () => {
-    setDate(tempDateRange); // Save the temporary date range to the main state
-    setIsOpen(false); // Close the popover
-  };
+  // const handleDateRangeApply = () => {
+  //   setDate(tempDateRange); // Save the temporary date range to the main state
+  //   setIsOpen(false); // Close the popover
+  // };
 
-  const handleDateRangeReset = () => {
-    setTempDateRange(undefined); // Reset the temporary date range
-  };
+  // const handleDateRangeReset = () => {
+  //   setTempDateRange(undefined); // Reset the temporary date range
+  // };
 
-  const defaultStartDate = new Date(); // Default start date fallback
+  // const defaultStartDate = new Date(); // Default start date fallback
 
   return (
     <Fragment>
@@ -44,9 +33,9 @@ export function Demo1LightSidebarPage() {
         <Toolbar>
           <ToolbarHeading
             title="Dashboard"
-            description="Central Hub for Personal Customization"
+            description=""
           />
-          <ToolbarActions>
+          {/* <ToolbarActions>
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
                 <Button id="date" variant="outline">
@@ -82,11 +71,11 @@ export function Demo1LightSidebarPage() {
                 </div>
               </PopoverContent>
             </Popover>
-          </ToolbarActions>
+          </ToolbarActions> */}
         </Toolbar>
       </Container>
       <Container>
-        <Demo1LightSidebarContent />
+        {/* <Demo1LightSidebarContent /> */}
       </Container>
     </Fragment>
   );

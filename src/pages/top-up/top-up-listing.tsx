@@ -168,7 +168,7 @@ export function TopUpListing({ }: Props) {
 
   return (
     <Fragment>
-      {settings?.layout === 'demo1' && (
+      {/* {settings?.layout === 'demo1' && (
         <Container>
           <Toolbar>
             <ToolbarHeading>
@@ -196,7 +196,14 @@ export function TopUpListing({ }: Props) {
             </ToolbarActions>
           </Toolbar>
         </Container>
-      )}
+      )} */}
+      <Container>
+        <Toolbar>
+          <ToolbarHeading>
+            <ToolbarPageTitle />
+          </ToolbarHeading>
+        </Toolbar>
+      </Container>
       <Container>
         <TanstackTable columns={columns} queryKey='' url='' />
       </Container>
