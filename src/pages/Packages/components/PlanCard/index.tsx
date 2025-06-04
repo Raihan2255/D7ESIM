@@ -20,9 +20,19 @@ export default function PlanCard({ item }: Props) {
           <div className='border-r-[1px] border-r-[#D6D6D6]'>
             <p className='text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>30 days</p>
           </div>
-          <div>
-            <p className='text-right md:text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>{item?.texts} SMS</p>
-          </div>
+          {
+            item?.include_call ? (
+              <div>
+                <p className='text-right md:text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>{item?.texts} SMS</p>
+              </div>
+            ) : (
+              <div>
+                <p className='text-center text-[#06AD2A] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>
+                  $ {item?.price?.toFixed(2)}
+                </p>
+              </div>
+            )
+          }
         </div>
       </div>
 

@@ -68,7 +68,7 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
       }
 
       const updatedUrl = `${url}?${params.toString()}`
-      const response = await getAll<PaginationResponse<T>>(updatedUrl)
+      const response = await getAll<PaginationResponse<T>>(updatedUrl, { requiresAuth: true })
       return response?.data
     } catch (error) {
       console.error(error)
