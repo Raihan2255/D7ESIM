@@ -3,7 +3,6 @@ interface DropdownOption {
   value: string;
 }
 // import auth from "@/core/utils/auth";
-import { getAppBaseUrl } from "@/utils/helper";
 
 export const languageKey = "admin-language";
 
@@ -11,7 +10,7 @@ export const redirectUrl = "redirectUrl";
 
 export const APP_BASE_URL_KEY = "appBaseUrl";
 // API URL
-export const apiBaseUrl = getAppBaseUrl();
+// export const apiBaseUrl = getAppBaseUrl();
 
 export const requestTimeout = 60000;
 

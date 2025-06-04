@@ -75,7 +75,7 @@ export function Demo1LightSidebarPage() {
         </Toolbar>
       </Container>
       <Container>
-        {/* <Demo1LightSidebarContent /> */}
+
       </Container>
     </Fragment>
   );

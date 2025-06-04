@@ -45,7 +45,9 @@ const auth = {
 		}
 		return null;
 	},
-
+	getRefreshToken(tokenKey = REFRESH_TOKEN_KEY) {
+		return auth.get(tokenKey);
+	},
 	getToken(tokenKey = TOKEN_KEY) {
 		return auth.get(tokenKey);
 	},

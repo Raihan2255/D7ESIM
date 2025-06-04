@@ -3,8 +3,11 @@ import { AuthModel, UserModel } from '@/auth/lib/models';
 import { USER_INFO } from '@/constants/global';
 import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { supabase } from '@/lib/supabase';
+import { IApiResponse } from '@/types/global.types';
 import { ILoginSuccessResponse } from '@/types/login.types';
 import auth from '@/utils/auth';
+import { LOGIN_URL } from '@/utils/constants';
+import { useNavigate } from 'react-router';
 
 /**
  * Supabase adapter that maintains the same interface as the existing auth flow
@@ -289,7 +292,15 @@ export const SupabaseAdapter = {
    * Logout the current user
    */
   async logout(): Promise<void> {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw new Error(error.message);
+    const { create } = useApiHandlers()
+    const navigate = useNavigate()
+    const refresh_token = auth.getRefreshToken()
+
+    const data = { refresh: refresh_token }
+
+    const response: any = await create<IApiResponse<any>>(API_END_POINTS.logOut.endPoint, data);
+    if (response?.data && response?.status) {
+      navigate(LOGIN_URL);
+    }
   },
 };

@@ -15,7 +15,7 @@ export const API_END_POINTS: IAPIEndpoints = {
     method: API_METHODS.PATCH,
   },
   logOut: {
-    endPoint: "api/accounts/auth/logout",
+    endPoint: "api/accounts/admin/logout",
     method: API_METHODS.POST,
   },
 };
