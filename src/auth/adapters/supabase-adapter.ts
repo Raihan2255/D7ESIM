@@ -7,7 +7,7 @@ import { IApiResponse } from '@/types/global.types';
 import { ILoginSuccessResponse } from '@/types/login.types';
 import auth from '@/utils/auth';
 import { LOGIN_URL } from '@/utils/constants';
-import { setEncryptedToken } from '@/utils/cookies';
+import { removeToken, setEncryptedToken } from '@/utils/cookies';
 import { useNavigate } from 'react-router';
 
 /**
@@ -302,6 +302,7 @@ export const SupabaseAdapter = {
 
     const response: any = await create<IApiResponse<any>>(API_END_POINTS.logOut.endPoint, data);
     if (response?.data && response?.status) {
+      removeToken()
       navigate(LOGIN_URL);
     }
   },

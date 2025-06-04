@@ -37,9 +37,11 @@ export const RequireAuth = () => {
 
   // If not authenticated, redirect to login
   if (!auth?.access_token) {
+    const nextPath = location.pathname + location.search;
+
     return (
       <Navigate
-        to={`/auth/signin?next=${encodeURIComponent(location.pathname)}`}
+        to={`/auth/signin?next=${encodeURIComponent(nextPath)}`}
         replace
       />
     );
