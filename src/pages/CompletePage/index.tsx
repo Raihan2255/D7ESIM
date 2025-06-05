@@ -12,6 +12,7 @@ import SuccessCard from "./components/SuccessCard";
 import ProcessingCard from "./components/ProcessingCard";
 import FailedCard from "./components/FailedCard";
 import { appRoutes } from "@/routes/app-routes";
+import { toast } from "sonner";
 
 
 const SuccessIcon =
@@ -126,6 +127,9 @@ export default function CompletePage() {
         transaction: transactionId
       }
       const response = await create<IApiResponse<any>>(APP_APIS.packagePurchase, payload, { requiresAuth: true })
+      if (!response?.status) {
+        toast.error(response?.errors)
+      }
       if (response?.data && response?.status) {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.orderHistory] })
 

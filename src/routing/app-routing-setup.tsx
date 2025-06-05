@@ -25,8 +25,6 @@ export function AppRoutingSetup() {
           <Route path={appRoutes?.payment} element={<Payment />} />
           <Route path={appRoutes?.paymentSuccess} element={<CompletePage />} />
           <Route path={`${appRoutes.purchase}/:id/:country`} element={<Packages />} />
-
-
         </Route>
       </Route>
       <Route path="error/*" element={<ErrorRouting />} />
