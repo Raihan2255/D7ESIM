@@ -30,9 +30,9 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const currentUser = auth.getUserInfo()
+  const currentUser = auth.getUserInfo()?.user
 
-  const name = currentUser?.first_name + "" + currentUser?.last_name
+  const name = currentUser?.first_name + " " + currentUser?.last_name
 
   const handleThemeToggle = (checked: boolean) => {
     setTheme(checked ? 'dark' : 'light');
