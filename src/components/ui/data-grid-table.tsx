@@ -12,6 +12,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useDataGrid } from '@/components/ui/data-grid';
+import { Skeleton } from './skeleton';
 
 const headerCellSpacingVariants = cva('', {
   variants: {
@@ -516,8 +517,7 @@ function DataGridTable<TData>() {
 
       <DataGridTableBody>
         {props.loadingMode === 'skeleton' &&
-          isLoading &&
-          pagination?.pageSize ? (
+          isLoading ? (
           Array.from({ length: pagination.pageSize }).map((_, rowIndex) => (
             <DataGridTableBodyRowSkeleton key={rowIndex}>
               {table.getVisibleFlatColumns().map((column, colIndex) => {
@@ -526,7 +526,9 @@ function DataGridTable<TData>() {
                     column={column}
                     key={colIndex}
                   >
-                    {column.columnDef.meta?.skeleton}
+                    {column.columnDef.meta?.skeleton ?? (
+                      <Skeleton className="h-4 w-full rounded-md" />
+                    )}
                   </DataGridTableBodyRowSkeletonCell>
                 );
               })}

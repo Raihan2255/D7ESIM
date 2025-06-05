@@ -75,7 +75,7 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
     }
   }
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [queryKey, pagination, searchQuery, sorting],
     queryFn: getTableDatas,
     refetchOnWindowFocus: false,
@@ -174,6 +174,8 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
         columnsVisibility: true,
         cellBorder: true,
       }}
+      loadingMode='skeleton'
+      isLoading={isLoading}
     >
       <Card>
         <CardHeader>
