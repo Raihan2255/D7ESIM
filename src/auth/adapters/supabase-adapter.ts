@@ -308,6 +308,7 @@ export const SupabaseAdapter = {
 
     const response: any = await create<IApiResponse<any>>(API_END_POINTS.logOut.endPoint, data);
     if (response?.data && response?.status) {
+      auth.clearAppStorage();
       removeToken()
       navigate(LOGIN_URL);
     }
