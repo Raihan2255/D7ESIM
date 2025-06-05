@@ -173,6 +173,9 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
         columnsMovable: true,
         columnsVisibility: true,
         cellBorder: true,
+        stripped: true,
+        columnsResizable: true,
+        dense: true,
       }}
       loadingMode='skeleton'
       isLoading={isLoading}
