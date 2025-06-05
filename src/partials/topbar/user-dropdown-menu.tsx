@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
 import {
   BetweenHorizontalStart,
+  CircleUser,
   Coffee,
   CreditCard,
   FileText,
@@ -29,6 +30,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import ResetPasswordForm from '@/core/components/ResetPasswordForm';
+import auth from '@/utils/auth';
 
 export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
   const { logout, user } = useAuth();
@@ -36,17 +38,9 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  // Use display data from currentUser
-  const displayName =
-    user?.fullname ||
-    (user?.first_name && user?.last_name
-      ? `${user.first_name} ${user.last_name}`
-      : user?.username || 'User');
+  const currentUser = auth.getUserInfo()
 
-  const displayEmail = user?.email || '';
-  // const displayAvatar = user?.pic || toAbsoluteUrl('/media/avatars/300-2.png');
-  const displayAvatar = toAbsoluteUrl('/media/avatars/300-2.png');
-
+  const name = currentUser?.first_name + "" + currentUser?.last_name
 
 
   const handleThemeToggle = (checked: boolean) => {
@@ -61,29 +55,11 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
           {/* Header */}
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center gap-2">
-              <img
-                className="size-9 rounded-full border-2 border-success"
-                src={displayAvatar}
-                alt="User avatar"
-              />
+              <CircleUser className='cursor-pointer size-5.5!' />
               <div className="flex flex-col">
-                <Link
-                  to="/account/home/get-started"
-                  className="text-sm text-mono hover:text-primary font-semibold"
-                >
-                  {displayName}
-                </Link>
-                <a
-                  href={`mailto:${displayEmail}`}
-                  className="text-xs text-muted-foreground hover:text-primary"
-                >
-                  {displayEmail}
-                </a>
+                {name ?? "User"}
               </div>
             </div>
-            <Badge variant="primary" appearance="outline" size="sm">
-              Pro
-            </Badge>
           </div>
 
           <DropdownMenuSeparator />

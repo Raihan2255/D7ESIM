@@ -4,6 +4,7 @@ import { NotificationsSheet } from '@/partials/topbar/notifications-sheet';
 import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
 import {
   Bell,
+  CircleUser,
   Menu,
 } from 'lucide-react';
 import { useLocation } from 'react-router';
@@ -150,11 +151,14 @@ export function Header() {
               /> */}
               <UserDropdownMenu
                 trigger={
-                  <img
-                    className="size-9 rounded-full border-2 border-success shrink-0 cursor-pointer"
-                    src={toAbsoluteUrl('/media/avatars/300-2.png')}
-                    alt="User Avatar"
-                  />
+                  <Button
+                    variant="ghost"
+                    mode="icon"
+                    shape="circle"
+                    className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"
+                  >
+                    <CircleUser className='cursor-pointer size-5.5!' />
+                  </Button>
                 }
               />
             </>
