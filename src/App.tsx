@@ -30,7 +30,7 @@ export function App() {
                   <QueryProvider>
                     <LoadingBarContainer>
                       <BrowserRouter basename={BASE_URL}>
-                        <Toaster />
+                        <Toaster position='top-center' />
                         <ModulesProvider>
                           <AppRouting />
                         </ModulesProvider>

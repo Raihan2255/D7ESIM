@@ -9,6 +9,7 @@ import auth from '@/utils/auth';
 import { LOGIN_URL } from '@/utils/constants';
 import { removeToken, setEncryptedToken } from '@/utils/cookies';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 /**
  * Supabase adapter that maintains the same interface as the existing auth flow
@@ -25,7 +26,7 @@ export const SupabaseAdapter = {
       const url = API_END_POINTS?.login?.endPoint;
       const payload = { email: email, password: password };
 
-      const resp = await create<any>(url, payload);
+      const resp = await create<IApiResponse<any>>(url, payload);
       // Handle successful login
       if (resp?.status && resp?.status_code === 200) {
         const response = resp as ILoginSuccessResponse;
@@ -44,9 +45,14 @@ export const SupabaseAdapter = {
           access_token: response?.data?.token,
           refresh_token: response?.data?.refresh
         };
+
+        // return { 'Login failed: Invalid credentials or unexpected response' };
       }
+
+      toast.error(resp?.errors || 'Login failed');
+
       // Handle non-200 response
-      throw new Error('Login failed: Invalid credentials or unexpected response');
+      throw new Error(resp?.errors);
 
     } catch (error) {
       console.error('SupabaseAdapter: Unexpected login error:', error);

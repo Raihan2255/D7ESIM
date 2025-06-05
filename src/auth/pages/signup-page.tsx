@@ -22,6 +22,8 @@ import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { IApiResponse } from '@/types/global.types';
 import { API_END_POINTS } from '@/apis/api-constants';
 import { appRoutes } from '@/routes/app-routes';
+import auth from '@/utils/auth';
+import { toast } from 'sonner';
 
 export function SignUpPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -43,29 +45,45 @@ export function SignUpPage() {
     },
   });
 
+  const { setError: setServerErrors } = form
+
   async function onSubmit(values: SignupSchemaType) {
     try {
       setIsProcessing(true);
       setError(null);
 
-      const response = await create<IApiResponse<any>>(API_END_POINTS.register?.endPoint, values)
+      const response = await create<IApiResponse<any>>(API_END_POINTS.register?.endPoint, values, { requiresAuth: true })
+
+
+      if (!response?.status) {
+        // Iterate through each error field
+        for (const key in response?.errors) {
+          if (response.errors.hasOwnProperty(key)) {
+            setServerErrors(key as keyof SignupSchemaType, {
+              type: "manual",
+              message: response.errors[key][0] // First error message for the field
+            });
+          }
+        }
+      }
+      // if (response)
       if (response?.status) {
+        // auth.set(response.data, USER_INFO, true);
+        auth.setToken(response.data?.token, true);
+        auth.setRefreshToken(response.data?.refresh, true);
+
         // Use navigate for navigation
         navigate(appRoutes.verify);
-      }
-      // Register the user with Supabase
-      // await register(
-      //   values.email,
-      //   values.password,
-      //   values.confirmPassword,
-      //   values.firstName,
-      //   values.lastName,
-      // );
+        toast.success(response?.message)
 
-      // Set success message and metadata
-      setSuccessMessage(
-        'Registration successful! Please check your email to confirm your account.',
-      );
+        // Set success message and metadata
+        setSuccessMessage(
+          'Registration successful! Please check your email to confirm your account.',
+        );
+      }
+
+
+
 
       // After successful registration, you might want to update the user profile
       // with additional metadata (firstName, lastName, etc.)

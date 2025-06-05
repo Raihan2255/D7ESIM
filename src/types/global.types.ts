@@ -9,4 +9,5 @@ export interface IApiResponse<T> {
   data: T;
   status_code: number;
   status: boolean;
+  errors: any
 }
