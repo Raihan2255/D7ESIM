@@ -1,22 +1,14 @@
 import { ReactNode, useState } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
 import {
-  BetweenHorizontalStart,
   CircleUser,
-  Coffee,
-  CreditCard,
-  FileText,
   ListRestart,
   Moon,
   Settings,
-  Shield,
   UserCircle,
-  Users,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Link } from 'react-router';
-import { toAbsoluteUrl } from '@/lib/helpers';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -33,7 +25,7 @@ import ResetPasswordForm from '@/core/components/ResetPasswordForm';
 import auth from '@/utils/auth';
 
 export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -41,7 +33,6 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
   const currentUser = auth.getUserInfo()
 
   const name = currentUser?.first_name + "" + currentUser?.last_name
-
 
   const handleThemeToggle = (checked: boolean) => {
     setTheme(checked ? 'dark' : 'light');

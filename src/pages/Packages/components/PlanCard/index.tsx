@@ -15,10 +15,10 @@ export default function PlanCard({ item }: Props) {
       <div className='flex-1 mt-8 md:mt-[1.05rem] lg:mt-[1.4rem] xl:mt-[1.75rem] 2xl:mt-[2.1rem] 3xl:mt-[2.625rem]'>
         <div className='grid grid-cols-3'>
           <div className='border-r-[1px] border-r-[#D6D6D6]'>
-            <p className='text-left md:text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>{item?.data_available} GB</p>
+            <p className='text-left md:text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>{item?.data_available}</p>
           </div>
           <div className='border-r-[1px] border-r-[#D6D6D6]'>
-            <p className='text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>30 days</p>
+            <p className='text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>{item?.validity?.toFixed(0) + "" + item?.validity_period}</p>
           </div>
           {
             item?.include_call ? (
