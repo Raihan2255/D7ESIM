@@ -3,11 +3,14 @@ import { z } from 'zod';
 // Schema for requesting a password reset email
 export const getResetRequestSchema = () => {
   return z.object({
-    email: z
+    new_password: z.string().min(1, "New password is required"),
+    confirm_password: z
       .string()
-      .email({ message: 'Please enter a valid email address.' })
-      .min(1, { message: 'Email is required.' }),
-  });
+      .min(1, "Confirm password is required"),
+  }).refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  })
 };
 
 // Schema for setting a new password

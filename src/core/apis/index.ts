@@ -5,5 +5,6 @@ export const APP_APIS = {
   orderHistory: 'api/order/order/list',
   country: 'api/country/admin/country',
   packagesCountryWise: 'api/package/customer/package',
-  verify: 'api/accounts/customers/verify/'
+  verify: 'api/accounts/customers/verify/',
+  resetPassword: 'api/accounts/password/reset/password'
 }

@@ -44,7 +44,7 @@ export default function FileInput({ onChange, value, multiple = false }: Props) 
             onClick={onImageUpload}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            Select Images
+            Select File
           </button>
 
           {fileList.length > 0 && (

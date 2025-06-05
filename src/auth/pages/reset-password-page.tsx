@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Check, MoveLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -21,53 +17,52 @@ import {
   getResetRequestSchema,
   ResetRequestSchemaType,
 } from '../forms/reset-password-schema';
+import { useApiHandlers } from '@/hooks/useApiHandlers';
+import { APP_APIS } from '@/core/apis';
+import { useNavigate, useSearchParams } from 'react-router';
+import { IApiResponse } from '@/types/global.types';
+import { toast } from 'sonner';
 
 export function ResetPasswordPage() {
-  const {} = useAuth();
+  const { } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [searchParams] = useSearchParams()
+
+  const { create } = useApiHandlers()
+  const navigate = useNavigate()
 
   const form = useForm<ResetRequestSchemaType>({
     resolver: zodResolver(getResetRequestSchema()),
+    mode: 'all',
     defaultValues: {
-      email: '',
+      confirm_password: '',
+      new_password: ''
     },
   });
 
   async function onSubmit(values: ResetRequestSchemaType) {
     try {
       setIsProcessing(true);
-      setError(null);
+      const uid = searchParams.get("uid")
+      const token = searchParams.get("token")
 
-      console.log('Submitting password reset for:', values.email);
+      const payload = {
+        new_password: values?.new_password,
+        confirm_password: values?.confirm_password,
+        token: token,
+        uid: uid
+      }
+      const response = await create<IApiResponse<any>>(APP_APIS.resetPassword, payload)
 
-      // Request password reset using Supabase directly
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        values.email,
-        {
-          redirectTo: `${window.location.origin}/auth/reset-password`,
-        },
-      );
-
-      if (error) {
-        throw new Error(error.message);
+      if (response?.data && response?.status) {
+        navigate('/auth/signin')
+        form.reset();
+        toast.success(response?.message ?? "Success")
       }
 
-      // Set success message
-      setSuccessMessage(
-        `Password reset link sent to ${values.email}! Please check your inbox and spam folder.`,
-      );
-
-      // Reset form
-      form.reset();
     } catch (err) {
       console.error('Password reset request error:', err);
-      setError(
-        err instanceof Error
-          ? `Error: ${err.message}. Please ensure your email is correct and try again.`
-          : 'An unexpected error occurred. Please try again or contact support.',
-      );
+
     } finally {
       setIsProcessing(false);
     }
@@ -81,43 +76,35 @@ export function ResetPasswordPage() {
             <h1 className="text-2xl font-bold tracking-tight">
               Reset Password
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Enter your email to receive a password reset link
-            </p>
           </div>
-
-          {error && (
-            <Alert variant="destructive">
-              <AlertIcon>
-                <AlertCircle className="h-4 w-4" />
-              </AlertIcon>
-              <AlertTitle>{error}</AlertTitle>
-            </Alert>
-          )}
-
-          {successMessage && (
-            <Alert>
-              <AlertIcon>
-                <Check className="h-4 w-4 text-green-500" />
-              </AlertIcon>
-              <AlertTitle>{successMessage}</AlertTitle>
-            </Alert>
-          )}
 
           <div className="space-y-5">
             <FormField
               control={form.control}
-              name="email"
+              name="new_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>
+                    New Password <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="your.email@example.com"
-                      type="email"
-                      autoComplete="email"
-                      {...field}
-                    />
+                    <Input type="text" placeholder="Enter new password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirm_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Confirm Password <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="Enter confirm password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,22 +114,22 @@ export function ResetPasswordPage() {
             <Button type="submit" className="w-full" disabled={isProcessing}>
               {isProcessing ? (
                 <span className="flex items-center gap-2">
-                  <Spinner className="h-4 w-4" /> Sending Link...
+                  <Spinner className="h-4 w-4" /> Reseting Password...
                 </span>
               ) : (
-                'Send Reset Link'
+                'Reset Password'
               )}
             </Button>
           </div>
 
-          <div className="text-center text-sm">
+          {/* <div className="text-center text-sm">
             <Link
               to="/auth/signin"
               className="inline-flex items-center gap-2 text-sm font-semibold text-accent-foreground hover:underline hover:underline-offset-2"
             >
               <MoveLeft className="size-3.5 opacity-70" /> Back to Sign In
             </Link>
-          </div>
+          </div> */}
         </form>
       </Form>
     </div>

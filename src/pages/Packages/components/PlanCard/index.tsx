@@ -36,22 +36,22 @@ export default function PlanCard({ item }: Props) {
         </div>
       </div>
 
-      <div className='grid grid-cols-2 mt-6 md:mt-[0.6rem] lg:mt-[0.8rem] xl:mt-[1rem] 2xl:mt-[1.2rem] 3xl:mt-[1.5rem]'>
-        {
-          item?.include_call ? (
+      {
+        item?.include_call && (
+          <div className='grid grid-cols-2 mt-6 md:mt-[0.6rem] lg:mt-[0.8rem] xl:mt-[1rem] 2xl:mt-[1.2rem] 3xl:mt-[1.5rem]'>
             <div className='border-r-[1px] border-r-[#D6D6D6]'>
               <p className='text-center text-[#32A4E3] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>
                 {item?.calls} Mins Calls
               </p>
             </div>
-          ) : (<div />)
-        }
-        <div>
-          <p className='text-center text-[#06AD2A] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>
-            $ {item?.price?.toFixed(2)}
-          </p>
-        </div>
-      </div>
+            <div>
+              <p className='text-center text-[#06AD2A] font-semibold text-[1rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] 2xl:text-[1.2rem] 3xl:text-[1.5rem]'>
+                $ {item?.price?.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        )
+      }
 
     </div>
   )
