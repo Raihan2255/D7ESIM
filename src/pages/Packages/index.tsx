@@ -142,7 +142,8 @@ export default function Packages({ }: Props) {
           queryKey={QUERY_KEYS.packages}
           url={APP_APIS.packagesCountryWise}
           extraParams={{
-            country: id
+            country: id,
+            type: 'country'
           }}
         />
       </Container>
