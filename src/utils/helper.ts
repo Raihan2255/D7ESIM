@@ -144,3 +144,8 @@ export const formatLabel = (label: string): string => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 };
+
+export const truncateText = (text: string, maxLength: number): string => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength).trim() + '...' : text;
+};

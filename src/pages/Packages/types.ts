@@ -1,27 +1,21 @@
 export type TPackage = {
   id: number
+  package_unique: string
   name: string
-  validity_period: string
-  validity: number
-  data_available: string
-  type: string
-  include_call: boolean
-  is_active: boolean
   price: number
-  calls: string
-  texts: string
+  voice: number
+  data: number
+  sms: number
+  original_cost: number
   country: Country[]
-  region: Region[]
+  is_active: boolean
+  validity_in_days: number
+  data_in_gb: number
+  call_included: boolean
 }
-
 export interface Country {
   id: number
   name: string
-  logo?: string
-}
-
-export interface Region {
-  id: number
-  name: string
-  country: any[]
+  slug: string
+  logo: string
 }
