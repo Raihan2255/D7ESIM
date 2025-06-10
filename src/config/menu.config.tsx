@@ -67,11 +67,11 @@ export const MENU_SIDEBAR: MenuConfig = [
     icon: ScrollText,
     path: '/purchase/purchase-listing',
   },
-  {
-    title: 'Top Up',
-    icon: Theater,
-    path: '/top-up',
-  },
+  // {
+  //   title: 'Top Up',
+  //   icon: Theater,
+  //   path: '/top-up',
+  // },
   {
     title: 'Order History',
     icon: History,
