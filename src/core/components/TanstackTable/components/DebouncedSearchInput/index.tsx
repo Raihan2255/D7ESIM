@@ -33,7 +33,7 @@ export default function DebouncedSearchInput({ onChange, value: initialValue, de
         placeholder="Search..."
         value={value} // The current value of the input
         onChange={(e) => setValue(e.target.value)} // Update the value state when the input changes
-        className="ps-9 w-40"
+        className="ps-9 w-50"
       />
     </>
   )

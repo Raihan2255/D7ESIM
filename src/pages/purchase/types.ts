@@ -1,9 +1,5 @@
 export type TCountry = {
-  id: number
-  slug: string
-  code: any
+  code: string
   name: string
-  is_active: boolean
-  logo: any
-  created_at: string
+  logo: string
 }

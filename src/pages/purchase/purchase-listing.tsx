@@ -72,7 +72,7 @@ export function PurchaseListing({ }: Props) {
         cell: ({ row }) => (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={() => navigate(`${row.original.slug}/${row?.original?.name}`)} variant="outline" className='border-none size-[30px] rounded-full'>
+              <Button onClick={() => navigate(`${row.original.code}/${row?.original?.name}`)} variant="outline" className='border-none size-[30px] rounded-full'>
                 <Eye />
               </Button>
             </TooltipTrigger>

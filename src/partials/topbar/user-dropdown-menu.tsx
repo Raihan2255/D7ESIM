@@ -5,10 +5,8 @@ import {
   ListRestart,
   Moon,
   Settings,
-  UserCircle,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,9 +28,9 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const currentUser = auth.getUserInfo()
+  const currentUser = auth.getUserInfo()?.user
 
-  const name = currentUser?.first_name + "" + currentUser?.last_name
+  const name = currentUser?.first_name + " " + currentUser?.last_name
 
   const handleThemeToggle = (checked: boolean) => {
     setTheme(checked ? 'dark' : 'light');
@@ -56,7 +54,7 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
           <DropdownMenuSeparator />
 
 
-          <DropdownMenuItem asChild>
+          {/* <DropdownMenuItem asChild>
             <Link
               to="/account/home/user-profile"
               className="flex items-center gap-2"
@@ -64,7 +62,7 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
               <UserCircle />
               My Profile
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           {/* My Account Submenu */}
           <DropdownMenuSub>

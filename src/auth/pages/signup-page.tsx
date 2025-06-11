@@ -34,12 +34,14 @@ export function SignUpPage() {
 
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(getSignupSchema()),
+    mode: 'all',
     defaultValues: {
       email: '',
       password: '',
       rememberMe: true,
       first_name: '',
       last_name: '',
+      phone: ''
     },
   });
 
@@ -64,6 +66,7 @@ export function SignUpPage() {
           }
         }
       }
+
       // if (response)
       if (response?.status) {
         // auth.set(response.data, USER_INFO, true);
@@ -79,24 +82,8 @@ export function SignUpPage() {
           'Registration successful! Please check your email to confirm your account.',
         );
       }
-
-
-
-
-      // After successful registration, you might want to update the user profile
-      // with additional metadata (firstName, lastName, etc.)
-
-      // Optionally redirect to login page after a delay
-      // setTimeout(() => {
-      //   navigate('/auth/signin');
-      // }, 3000);
     } catch (err) {
       console.error('Registration error:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'An unexpected error occurred during registration. Please try again.',
-      );
     } finally {
       setIsProcessing(false);
     }

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StoreClientTopbar } from '@/pages/store-client/components/common/topbar';
-import { NotificationsSheet } from '@/partials/topbar/notifications-sheet';
 import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
 import {
-  Bell,
   CircleUser,
   Menu,
 } from 'lucide-react';
@@ -51,7 +49,7 @@ export function Header() {
     >
       <Container className="flex justify-between items-stretch lg:gap-4">
         {/* HeaderLogo */}
-        <div className="flex gap-1 lg:hidden items-center gap-2.5">
+        <div className="flex lg:hidden items-center gap-2.5">
           <Link to="/" className="shrink-0">
             <img
               src={toAbsoluteUrl('/media/app/secondary-logo.png')}
@@ -113,7 +111,7 @@ export function Header() {
                   }
                 />
               )} */}
-              <NotificationsSheet
+              {/* <NotificationsSheet
                 trigger={
                   <Button
                     variant="ghost"
@@ -124,7 +122,7 @@ export function Header() {
                     <Bell className="size-4.5!" />
                   </Button>
                 }
-              />
+              /> */}
               {/* <ChatSheet
                 trigger={
                   <Button

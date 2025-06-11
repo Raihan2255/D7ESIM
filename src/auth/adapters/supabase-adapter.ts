@@ -8,6 +8,7 @@ import { ILoginSuccessResponse } from '@/types/login.types';
 import auth from '@/utils/auth';
 import { LOGIN_URL } from '@/utils/constants';
 import { removeToken, setEncryptedToken } from '@/utils/cookies';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -303,6 +304,7 @@ export const SupabaseAdapter = {
     const { create } = useApiHandlers()
     const navigate = useNavigate()
     const refresh_token = auth.getRefreshToken()
+    const queryClient = useQueryClient()
 
     const data = { refresh: refresh_token }
 
@@ -311,6 +313,7 @@ export const SupabaseAdapter = {
       auth.clearAppStorage();
       removeToken()
       navigate(LOGIN_URL);
+      queryClient.clear();
     }
   },
 };

@@ -38,11 +38,11 @@ export default function Packages({ }: Props) {
       },
       {
         id: 'validity_period',
-        accessorFn: (row) => row.validity_period,
+        accessorFn: (row) => row.validity_in_days,
         header: ({ column }) => (
           <DataGridColumnHeader title="Validity" column={column} />
         ),
-        cell: ({ row }) => <>{row?.original?.validity + " " + row?.original?.validity_period}</>,
+        cell: ({ row }) => <>{row?.original?.validity_in_days} Days</>,
         enableSorting: true,
         size: 100,
         meta: {
@@ -54,35 +54,26 @@ export default function Packages({ }: Props) {
         header: ({ column }) => (
           <DataGridColumnHeader title="Available Data" column={column} />
         ),
-        accessorFn: (row) => row.data_available,
+        accessorFn: (row) => row.data_in_gb,
+        cell: ({ row }) => <>{row?.original?.data_in_gb} GB</>,
         enableSorting: true,
         size: 100,
         meta: {
           headerClassName: '',
         },
       },
-      // {
-      //   id: 'status',
-      //   header: ({ column }) => (
-      //     <DataGridColumnHeader title="Status" column={column} />
-      //   ),
-      //   cell: ({ row }) => (
-      //     <Badge
-      //       size="lg"
-      //       variant={row.original.is_active ? "success" : "warning"}
-      //       appearance="outline"
-      //       shape="circle"
-      //     >
-      //       <BadgeDot className={`${row.original.is_active ? "success" : "warning"}`} />
-      //       {row.original.is_active ? "Active" : "In Active"}
-      //     </Badge>
-      //   ),
-      //   enableSorting: true,
-      //   size: 100,
-      //   meta: {
-      //     headerClassName: '',
-      //   },
-      // },
+      {
+        id: 'price',
+        header: ({ column }) => (
+          <DataGridColumnHeader title="Price" column={column} />
+        ),
+        accessorFn: (row) => row.price,
+        enableSorting: true,
+        size: 100,
+        meta: {
+          headerClassName: '',
+        },
+      },
       {
         id: 'actions',
         header: ({ column }) => (
@@ -110,7 +101,7 @@ export default function Packages({ }: Props) {
                 <Button onClick={handlePaymentNavigation}>Buy Now</Button>
               </div>
               <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className='bg-transparent border-none shadow-none p-0'>
+                <DialogContent className='bg-transparent border-none shadow-none p-0 max-w-[350px]'>
                   <PlanCard item={row?.original} />
                 </DialogContent>
               </Dialog>
@@ -142,7 +133,8 @@ export default function Packages({ }: Props) {
           queryKey={QUERY_KEYS.packages}
           url={APP_APIS.packagesCountryWise}
           extraParams={{
-            country: id
+            country: id,
+            type: 'country'
           }}
         />
       </Container>

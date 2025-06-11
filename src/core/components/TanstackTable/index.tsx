@@ -12,6 +12,7 @@ import { PaginationResponse } from './types'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router'
 import DebouncedSearchInput from './components/DebouncedSearchInput'
+import { getSearchParams, setSearchParams } from '@/utils/url-params'
 
 type Props<T> = {
   columns: ColumnDef<T>[]
@@ -76,10 +77,13 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, pagination, searchQuery, sorting],
+    queryKey: [queryKey, pagination, searchQuery, sorting, extraParams],
     queryFn: getTableDatas,
     refetchOnWindowFocus: false,
     enabled: !!url && pagination.pageSize > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 15 * 60 * 1000, // 15 minutes
+    refetchIntervalInBackground: true,
   })
 
   const table = useReactTable({
@@ -105,30 +109,62 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
     getSortedRowModel: getSortedRowModel(),
   });
 
-  useEffect(() => {
-    const pageParam = searchParams.get('page');
-    const pageSizeParam = searchParams.get('pageSize');
-    const searchParam = searchParams.get('search');
-    const sortBy = searchParams.get('sortBy');
-    const sortOrder = searchParams.get('sortOrder');
+  const syncStateWithURL = () => {
+    const pageParam = parseInt(getSearchParams("page") || "1", 10);
+    const pageSizeParam = getSearchParams('pageSize');
+    const searchParam = getSearchParams('search');
 
-    const pageIndex = pageParam ? parseInt(pageParam, 10) - 1 : 0;
+    const pageIndex = pageParam ? parseInt(String(pageParam), 10) - 1 : 0;
     const pageSize = pageSizeParam ? parseInt(pageSizeParam, 10) : 10;
 
     // Prevent unnecessary state updates (avoid render loops)
-    setPagination((prev) => {
-      if (prev.pageIndex === pageIndex && prev.pageSize === pageSize) return prev;
-      return { pageIndex, pageSize };
-    });
+    setPagination({ pageIndex, pageSize });
 
     if (searchParam) {
       setSearchQuery(searchParam);
     }
+  }
 
-    if (sortBy) {
-      setSorting([{ id: sortBy, desc: sortOrder === 'desc' }]);
-    }
+  useEffect(() => {
+    syncStateWithURL()
+    // Event listener for popstate to handle back/forward navigation
+    const handlePopState = () => {
+      syncStateWithURL();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
+
+  useEffect(() => {
+
+    const params: Record<string, string | number> = {
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+      search: searchQuery || '',
+    };
+
+    const sort = sorting[0];
+
+    if (sort?.id) {
+      params.sortBy = sort.id;
+      params.sortOrder = sort.desc ? 'desc' : 'asc';
+    }
+
+    if (extraParams) {
+      Object.entries(extraParams).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          params[key] = String(value);
+        }
+      });
+    }
+
+    setSearchParams(params);
+
+  }, [pagination, searchQuery, sorting, extraParams]);
 
 
   useEffect(() => {
@@ -169,8 +205,8 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
       table={table as any}
       recordCount={data?.total_count || 0}
       tableLayout={{
-        columnsPinnable: true,
-        columnsMovable: true,
+        columnsPinnable: false,
+        columnsMovable: false,
         columnsVisibility: true,
         cellBorder: true,
         stripped: true,
@@ -186,12 +222,17 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
-                <DebouncedSearchInput onChange={(value) => setSearchQuery(value)} value={searchQuery} />
+                <DebouncedSearchInput onChange={(value) => {
+                  setSearchQuery(value)
+                  if (value !== "") {
+                    setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
+                  }
+                }} value={searchQuery} />
                 {searchQuery.length > 0 && (
                   <Button
                     mode="icon"
                     variant="ghost"
-                    className="absolute end-1.5 top-1/2 -translate-y-1/2 h-6 w-6"
+                    className="absolute end-1.5 top-1/2 -translate-y-1/2 h-6 w-6 bg-gray-50"
                     onClick={() => setSearchQuery('')}
                   >
                     <X />

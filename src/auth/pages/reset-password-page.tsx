@@ -53,6 +53,10 @@ export function ResetPasswordPage() {
         uid: uid
       }
       const response = await create<IApiResponse<any>>(APP_APIS.resetPassword, payload)
+      if (!response?.status) {
+        toast.error(response?.message)
+        return
+      }
 
       if (response?.data && response?.status) {
         navigate('/auth/signin')
