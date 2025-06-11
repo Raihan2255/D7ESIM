@@ -222,7 +222,12 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
-                <DebouncedSearchInput onChange={(value) => setSearchQuery(value)} value={searchQuery} />
+                <DebouncedSearchInput onChange={(value) => {
+                  setSearchQuery(value)
+                  if (value !== "") {
+                    setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
+                  }
+                }} value={searchQuery} />
                 {searchQuery.length > 0 && (
                   <Button
                     mode="icon"
