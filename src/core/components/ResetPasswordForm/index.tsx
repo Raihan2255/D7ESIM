@@ -47,13 +47,27 @@ export default function ResetPasswordForm({ open, setOpen }: Props) {
     }
   })
 
+  const { setError: setServerErrors } = form
+
   const onSubmit = async (data: ResetPasswordForm) => {
     try {
       setIsLoading(true)
       const response = await updateById<IApiResponse<any>>(API_END_POINTS.reset.endPoint, data, { requiresAuth: true })
+      if (!response?.status) {
+        // Iterate through each error field
+        for (const key in response?.errors) {
+          if (response.errors.hasOwnProperty(key)) {
+            setServerErrors(key as keyof ResetPasswordForm, {
+              type: "manual",
+              message: response.errors[key][0] // First error message for the field
+            });
+          }
+        }
+      }
       if (response?.status) {
         toast.success(response?.message ?? "Success")
         form.reset()
+        setOpen(false)
       }
     } catch (error) {
       console.error(error)

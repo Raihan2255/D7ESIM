@@ -5,10 +5,8 @@ import {
   ListRestart,
   Moon,
   Settings,
-  UserCircle,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -56,7 +54,7 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
           <DropdownMenuSeparator />
 
 
-          <DropdownMenuItem asChild>
+          {/* <DropdownMenuItem asChild>
             <Link
               to="/account/home/user-profile"
               className="flex items-center gap-2"
@@ -64,7 +62,7 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
               <UserCircle />
               My Profile
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           {/* My Account Submenu */}
           <DropdownMenuSub>

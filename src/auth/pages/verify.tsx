@@ -43,11 +43,25 @@ export function Verify({ }: Props) {
     },
   });
 
+  const { setError: setServerErrors } = form
 
   const onSubmit = async (data: OtpSchemaType) => {
     try {
       setIsProcessing(true)
       const response = await create<IApiResponse<any>>(APP_APIS.verify, data, { requiresAuth: true })
+
+      if (!response?.status) {
+        // Iterate through each error field
+        for (const key in response?.errors) {
+          if (response.errors.hasOwnProperty(key)) {
+            setServerErrors(key as keyof OtpSchemaType, {
+              type: "manual",
+              message: response.errors[key][0] // First error message for the field
+            });
+          }
+        }
+      }
+
       if (response?.status) {
         toast.success(response?.message ?? "Success")
         // Get the 'next' parameter from URL if it exists
@@ -102,7 +116,7 @@ export function Verify({ }: Props) {
           name="otp"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Otp <span className="text-red-500">*</span></FormLabel>
+              <FormLabel>OTP <span className="text-red-500">*</span></FormLabel>
               <FormControl>
                 <Input placeholder="Enter the otp" {...field} />
               </FormControl>
