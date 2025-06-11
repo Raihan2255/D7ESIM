@@ -211,12 +211,12 @@ export function SignInPage() {
                     Remember me
                   </FormLabel>
                 </div>
-                {/* <Link
+                <Link
                   to="/auth/reset-password"
                   className="text-sm font-semibold text-foreground hover:text-primary"
                 >
                   Forgot Password?
-                </Link> */}
+                </Link>
               </div>
             </FormItem>
           )}

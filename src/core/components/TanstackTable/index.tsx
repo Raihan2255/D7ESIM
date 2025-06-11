@@ -77,7 +77,7 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, pagination, searchQuery, sorting],
+    queryKey: [queryKey, pagination, searchQuery, sorting, extraParams],
     queryFn: getTableDatas,
     refetchOnWindowFocus: false,
     enabled: !!url && pagination.pageSize > 0,
