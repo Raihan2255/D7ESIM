@@ -13,8 +13,8 @@ export default function Card({ item }: Props) {
       </div>
       <div className='mt-6 flex flex-col gap-4'>
         {
-          item?.usage?.map((details: any) => (
-            <div className='flex items-center gap-4'>
+          item?.usage?.map((details: any, index: number) => (
+            <div key={index} className='flex items-center gap-4'>
               <div className='size-[36px] bg-rose-300 rounded-[6px] flex items-center justify-center'>
                 {details?.icon}
               </div>

@@ -34,7 +34,7 @@ export default function PlanCard({ item }: Props) {
           <div className='flex items-center justify-between border-b-[1px] border-b-[#C6C6C6] pb-4 md:pb-[0.6rem] lg:pb-[0.8rem] xl:pb-[1rem] 2xl:pb-[1.2rem] 3xl:pb-[1.5rem]'>
             <p className='text-[#5F5F5F] font-semibold uppercase text-[14px] md:text-[0.4rem] lg:text-[0.533rem] xl:text-[0.666rem] 2xl:text-[0.8rem] 3xl:text-[1rem]'>Coverage</p>
             <p className={`text-[#0A66FE] cursor-pointer font-bold uppercase text-[14px] md:text-[0.4rem] lg:text-[0.533rem] xl:text-[0.666rem] 2xl:text-[0.8rem] 3xl:text-[1rem] border-[1px] border-[#0A66FE] p-2 md:p-[0.2rem] lg:p-[0.266rem] xl:p-[0.333rem] 2xl:p-[0.4rem] 3xl:p-[0.5rem] rounded-[3px] md:rounded-[0.15em] lg:rounded-[0.2rem] xl:rounded-[0.25rem] 2xl:rounded-[0.3rem] 3xl:rounded-[0.375rem]`}>
-              {item?.country?.length} Countries
+              {item?.country?.length} {item?.country?.length !== 1 ? "Countries" : "Country"}
             </p>
 
           </div>
