@@ -220,19 +220,22 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
         <CardHeader>
           <CardHeading>
             <div className="flex items-center gap-2.5">
-              <div className="relative">
-                <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
-                <DebouncedSearchInput onChange={(value) => {
-                  setSearchQuery(value)
-                  if (value !== "") {
-                    setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
-                  }
-                }} value={searchQuery} />
+              <div className='overflow-hidden flex items-center border-2 py-1 px-2 rounded-[6px] gap-2'>
+                <Search className="size-4 text-muted-foreground" />
+                <DebouncedSearchInput
+                  onChange={(value) => {
+                    setSearchQuery(value)
+                    if (value !== "") {
+                      setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
+                    }
+                  }}
+                  value={searchQuery}
+                />
                 {searchQuery.length > 0 && (
                   <Button
                     mode="icon"
                     variant="ghost"
-                    className="absolute end-1.5 top-1/2 -translate-y-1/2 h-6 w-6 bg-gray-50"
+                    className="h-6 w-6 bg-gray-50"
                     onClick={() => setSearchQuery('')}
                   >
                     <X />

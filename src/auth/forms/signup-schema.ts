@@ -4,10 +4,16 @@ export const getSignupSchema = () => {
   return z.object({
     first_name: z
       .string()
-      .min(1, { message: 'First name is required.' }),
+      .min(1, { message: 'First name is required.' })
+      .regex(/^[A-Za-z\s\-]+$/, {
+        message: 'First name can only contain letters, spaces, and hyphens.',
+      }),
     last_name: z
       .string()
-      .min(1, { message: 'Last name is required.' }),
+      .min(1, { message: 'Last name is required.' })
+      .regex(/^[A-Za-z\s\-]+$/, {
+        message: 'First name can only contain letters, spaces, and hyphens.',
+      }),
     phone: z
       .string()
       .nonempty({ message: 'Phone number is required.' })
