@@ -10,34 +10,65 @@ import { APP_APIS } from '@/core/apis';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { IApiResponse } from '@/types/global.types';
+import { Globe, MessageSquare, PhoneCall } from 'lucide-react';
+import Card from './components/Card';
+import UsageSkeleton from './components/UsageSkeleton';
+
+export interface IDashboard {
+  id: number
+  package: number
+  order_live: string
+  price: number
+  voice: number
+  sms: number
+  countries: string
+  status: string
+  unique: any
+  transaction: any
+  time_allowance_unit: string
+  time_allowance_duration: number
+  validity_in_days: number
+  data_in_gb: number
+  usage_data: UsageData
+}
+
+export interface UsageData {
+  work_order: string
+  data_usage_percent: number
+  sms_usage_percent: number
+  voice_usage_percent: number
+}
+
 
 export function Demo1LightSidebarPage() {
   const { getAll } = useApiHandlers()
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [date, setDate] = useState<DateRange | undefined>({
-  //   from: new Date(2025, 0, 20),
-  //   to: addDays(new Date(2025, 0, 20), 20),
-  // });
-  // const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(
-  //   date,
-  // );
-
-  // const handleDateRangeApply = () => {
-  //   setDate(tempDateRange); // Save the temporary date range to the main state
-  //   setIsOpen(false); // Close the popover
-  // };
-
-  // const handleDateRangeReset = () => {
-  //   setTempDateRange(undefined); // Reset the temporary date range
-  // };
-
-  // const defaultStartDate = new Date(); // Default start date fallback
 
   const getDashboardDatas = async () => {
     try {
-      const response = await getAll<IApiResponse<any>>(`${APP_APIS.dashboard}?is_paginated=false`, { requiresAuth: true })
+      const response = await getAll<IApiResponse<IDashboard[]>>(`${APP_APIS.dashboard}?is_paginated=false`, { requiresAuth: true })
       if (response?.data && response?.status) {
-        return response?.data ?? []
+        const updatedData = response?.data?.map((item) => ({
+          id: item?.id,
+          order_id: item?.order_live,
+          usage: [
+            {
+              text: 'Available Data',
+              value: item?.usage_data?.data_usage_percent,
+              icon: <Globe color="#ffffff" />
+            },
+            {
+              text: 'Call',
+              value: item?.usage_data?.voice_usage_percent,
+              icon: <PhoneCall color="#ffffff" />
+            },
+            {
+              text: 'Sms',
+              value: item?.usage_data?.sms_usage_percent,
+              icon: <MessageSquare color="#ffffff" />
+            },
+          ]
+        }))
+        return updatedData ?? []
       }
       return []
     } catch (error) {
@@ -45,7 +76,7 @@ export function Demo1LightSidebarPage() {
     }
   }
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.dashboard],
     queryFn: getDashboardDatas,
     refetchOnWindowFocus: false,
@@ -102,8 +133,21 @@ export function Demo1LightSidebarPage() {
         </Toolbar>
       </Container>
       <Container>
-        asdasdasd
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          {
+            isLoading ? (
+              <>{
+                Array.from({ length: 4 }).map((_, index) => (
+                  <UsageSkeleton key={index} />
+                ))}</>
+            ) : (
+              data && data?.map((item) => (
+                <Card item={item} key={item?.id} />
+              ))
+            )
+          }
+        </div>
       </Container>
-    </Fragment>
+    </Fragment >
   );
 }
