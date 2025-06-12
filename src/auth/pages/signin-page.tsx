@@ -185,7 +185,7 @@ export function SignInPage() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="top">
-                    {passwordVisible ? "Show password" : "Hide password"}
+                    {passwordVisible ? "Hide password" : "Show password"}
                   </TooltipContent>
                 </Tooltip>
               </div>

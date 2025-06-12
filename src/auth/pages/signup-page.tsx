@@ -22,6 +22,7 @@ import { API_END_POINTS } from '@/apis/api-constants';
 import { appRoutes } from '@/routes/app-routes';
 import auth from '@/utils/auth';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function SignUpPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -190,23 +191,30 @@ export function SignUpPage() {
               </div>
               <div className="relative">
                 <Input
-                  placeholder="Your password"
+                  placeholder="Enter your password"
                   type={passwordVisible ? 'text' : 'password'} // Toggle input type
                   {...field}
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  mode="icon"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                >
-                  {passwordVisible ? (
-                    <EyeOff className="text-muted-foreground" />
-                  ) : (
-                    <Eye className="text-muted-foreground" />
-                  )}
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      mode="icon"
+                      onClick={() => setPasswordVisible(!passwordVisible)}
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    >
+                      {passwordVisible ? (
+                        <Eye className="text-muted-foreground" />
+                      ) : (
+                        <EyeOff className="text-muted-foreground" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {passwordVisible ? "Hide password" : "Show password"}
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <FormMessage />
             </FormItem>
