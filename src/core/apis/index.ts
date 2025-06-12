@@ -6,5 +6,7 @@ export const APP_APIS = {
   country: 'api/country/admin/rest-country',
   packagesCountryWise: 'api/package/customer/customer-package-v2',
   verify: 'api/accounts/customers/verify/',
-  resetPassword: 'api/accounts/password/reset/password'
+  resetPassword: 'api/accounts/password/reset/password',
+  forgotPassword: 'api/accounts/password/admin-forgot-password',
+  dashboard: 'api/accounts/customers/dashboard'
 }

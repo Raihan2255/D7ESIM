@@ -212,7 +212,7 @@ export function SignInPage() {
                   </FormLabel>
                 </div>
                 <Link
-                  to="/auth/reset-password"
+                  to="/auth/forgot-password"
                   className="text-sm font-semibold text-foreground hover:text-primary"
                 >
                   Forgot Password?

@@ -11,6 +11,8 @@ import { ResetPasswordPage } from './pages/reset-password-page';
 import { SignInPage } from './pages/signin-page';
 import { SignUpPage } from './pages/signup-page';
 import { Verify } from './pages/verify';
+import ForgotPassword from './pages/forgot-password';
+
 
 // Define the auth routes
 export const authRoutes: RouteObject[] = [
@@ -37,6 +39,10 @@ export const authRoutes: RouteObject[] = [
       {
         path: 'reset-password',
         element: <ResetPasswordPage />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPassword />,
       },
       /* Extended examples */
       {

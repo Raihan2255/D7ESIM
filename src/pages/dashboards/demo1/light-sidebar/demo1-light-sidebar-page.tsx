@@ -5,8 +5,14 @@ import {
 } from '@/layouts/demo1/components/toolbar';
 
 import { Container } from '@/components/common/container';
+import { useApiHandlers } from '@/hooks/useApiHandlers';
+import { APP_APIS } from '@/core/apis';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { IApiResponse } from '@/types/global.types';
 
 export function Demo1LightSidebarPage() {
+  const { getAll } = useApiHandlers()
   // const [isOpen, setIsOpen] = useState(false);
   // const [date, setDate] = useState<DateRange | undefined>({
   //   from: new Date(2025, 0, 20),
@@ -26,6 +32,27 @@ export function Demo1LightSidebarPage() {
   // };
 
   // const defaultStartDate = new Date(); // Default start date fallback
+
+  const getDashboardDatas = async () => {
+    try {
+      const response = await getAll<IApiResponse<any>>(`${APP_APIS.dashboard}?is_paginated=false`, { requiresAuth: true })
+      if (response?.data && response?.status) {
+        return response?.data ?? []
+      }
+      return []
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.dashboard],
+    queryFn: getDashboardDatas,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 15 * 60 * 1000, // 15 minutes
+    refetchIntervalInBackground: true,
+  })
 
   return (
     <Fragment>
@@ -75,7 +102,7 @@ export function Demo1LightSidebarPage() {
         </Toolbar>
       </Container>
       <Container>
-
+        asdasdasd
       </Container>
     </Fragment>
   );

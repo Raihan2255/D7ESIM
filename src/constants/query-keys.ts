@@ -3,5 +3,6 @@ export const QUERY_KEYS = {
   orderHistory: "ORDER_HISTORY",
   countries: "COUNTRIES",
   packages: 'PACKAGES_COUNTRY_WISE',
-  verfiy: 'verfiy'
+  verfiy: 'verfiy',
+  dashboard: 'DASHBOARD'
 }
