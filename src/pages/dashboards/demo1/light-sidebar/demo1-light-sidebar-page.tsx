@@ -43,8 +43,9 @@ export function Demo1LightSidebarPage() {
             },
           ],
           qr_code: item?.order_details?.qr_code,
-          created_date: '',
-          expire_date: ''
+          created_date: item?.order_details?.package?.created_date,
+          expiry_date: item?.order_details?.package?.expiry_date,
+          countries: item?.supported_countries
         }))
         return updatedData ?? []
       }

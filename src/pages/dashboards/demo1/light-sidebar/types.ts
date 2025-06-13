@@ -1,3 +1,5 @@
+import { JSX } from "react"
+
 export interface IDashboard {
   id: number
   package: number
@@ -15,8 +17,16 @@ export interface IDashboard {
   data_in_gb: number
   usage_data: UsageData
   order_details: OrderDetails
+  supported_countries: SupportedCountry[]
 }
 
+export interface SupportedCountry {
+  id: number
+  name: string
+  slug: string
+  logo: string
+  code: string
+}
 
 export interface UsageData {
   work_order: string
@@ -96,4 +106,18 @@ export interface SimRegistry {
   sim_status: string
   provisioned_date: string
   sim_type: string
+}
+
+export type CardData = {
+  id: number;
+  order_id: string;
+  usage: {
+    text: string;
+    value: number;
+    icon: JSX.Element;
+  }[];
+  qr_code: string;
+  created_date: string;
+  expiry_date: string;
+  countries: SupportedCountry[];
 }
