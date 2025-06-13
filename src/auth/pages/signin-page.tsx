@@ -88,10 +88,10 @@ export function SignInPage() {
 
 
   async function onSubmit(values: SigninSchemaType) {
-    if (!captchaToken) {
-      setError("Please complete the captcha.");
-      return;
-    }
+    // if (!captchaToken) {
+    //   setError("Please complete the captcha.");
+    //   return;
+    // }
     try {
       setIsProcessing(true);
       setError(null);
@@ -235,13 +235,13 @@ export function SignInPage() {
             </FormItem>
           )}
         />
-        <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey={sitekey}
             onChange={onCaptchaChange}
           />
-        </div>
+        </div> */}
 
         <Button type="submit" className="w-full" disabled={isProcessing}>
           {isProcessing ? (

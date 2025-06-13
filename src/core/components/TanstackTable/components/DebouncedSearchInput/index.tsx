@@ -30,6 +30,7 @@ export default function DebouncedSearchInput({ onChange, value: initialValue, de
   return (
     <>
       <Input
+        style={{ all: 'unset' }}
         placeholder="Search..."
         value={value} // The current value of the input
         onChange={(e) => setValue(e.target.value)} // Update the value state when the input changes
