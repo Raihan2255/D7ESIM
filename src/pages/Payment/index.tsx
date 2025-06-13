@@ -9,8 +9,8 @@ import { useSearchParams } from 'react-router';
 import CompletePage from '../CompletePage';
 
 type Props = {}
-
-const stripePromise = loadStripe('pk_test_51RRpAtP3iTBMkZcgndG8XcDbXO46C3paqGTsIkebJZBWmLlqtpi1cRn8VU2djlOhz93V6tk33oUvHIvX1Ch30EFZ00QJp9nCb9');
+const pk = import.meta.env.VITE_PK_TEST
+const stripePromise = loadStripe(pk);
 
 export default function Payment({ }: Props) {
 

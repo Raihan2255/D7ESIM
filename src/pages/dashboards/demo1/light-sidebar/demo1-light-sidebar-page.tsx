@@ -13,32 +13,7 @@ import { IApiResponse } from '@/types/global.types';
 import { Globe, MessageSquare, PhoneCall } from 'lucide-react';
 import Card from './components/Card';
 import UsageSkeleton from './components/UsageSkeleton';
-
-export interface IDashboard {
-  id: number
-  package: number
-  order_live: string
-  price: number
-  voice: number
-  sms: number
-  countries: string
-  status: string
-  unique: any
-  transaction: any
-  time_allowance_unit: string
-  time_allowance_duration: number
-  validity_in_days: number
-  data_in_gb: number
-  usage_data: UsageData
-}
-
-export interface UsageData {
-  work_order: string
-  data_usage_percent: number
-  sms_usage_percent: number
-  voice_usage_percent: number
-}
-
+import { IDashboard } from './types';
 
 export function Demo1LightSidebarPage() {
   const { getAll } = useApiHandlers()
@@ -49,24 +24,27 @@ export function Demo1LightSidebarPage() {
       if (response?.data && response?.status) {
         const updatedData = response?.data?.map((item) => ({
           id: item?.id,
-          order_id: item?.order_live,
+          order_id: item?.order_details?.package?.package_template?.name,
           usage: [
             {
               text: 'Available Data',
               value: item?.usage_data?.data_usage_percent,
-              icon: <Globe color="#ffffff" />
+              icon: <Globe size={20} color="#ffffff" />
             },
             {
               text: 'Call',
               value: item?.usage_data?.voice_usage_percent,
-              icon: <PhoneCall color="#ffffff" />
+              icon: <PhoneCall size={20} color="#ffffff" />
             },
             {
               text: 'Sms',
               value: item?.usage_data?.sms_usage_percent,
-              icon: <MessageSquare color="#ffffff" />
+              icon: <MessageSquare size={20} color="#ffffff" />
             },
-          ]
+          ],
+          qr_code: item?.order_details?.qr_code,
+          created_date: '',
+          expire_date: ''
         }))
         return updatedData ?? []
       }
