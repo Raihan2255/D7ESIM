@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinners';
 import { getSigninSchema, SigninSchemaType } from '../forms/signin-schema';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import ReCAPTCHA from "react-google-recaptcha";
 
 export function SignInPage() {
   const [searchParams] = useSearchParams();
@@ -29,6 +30,11 @@ export function SignInPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const sitekey = import.meta.env.VITE_SITE_KEY
 
   // Check for success message from password reset or error messages
   useEffect(() => {
@@ -82,6 +88,10 @@ export function SignInPage() {
 
 
   async function onSubmit(values: SigninSchemaType) {
+    if (!captchaToken) {
+      setError("Please complete the captcha.");
+      return;
+    }
     try {
       setIsProcessing(true);
       setError(null);
@@ -100,10 +110,14 @@ export function SignInPage() {
       setIsProcessing(false)
     } finally {
       setIsProcessing(false)
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     }
   }
 
-
+  function onCaptchaChange(value: string | null) {
+    setCaptchaToken(value);
+  }
 
   return (
     <Form {...form}>
@@ -221,6 +235,13 @@ export function SignInPage() {
             </FormItem>
           )}
         />
+        <div className="flex flex-col gap-1">
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={sitekey}
+            onChange={onCaptchaChange}
+          />
+        </div>
 
         <Button type="submit" className="w-full" disabled={isProcessing}>
           {isProcessing ? (
