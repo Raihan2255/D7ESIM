@@ -85,8 +85,6 @@ export function SignInPage() {
     },
   });
 
-
-
   async function onSubmit(values: SigninSchemaType) {
     if (!captchaToken) {
       setError("Please complete the captcha.");
