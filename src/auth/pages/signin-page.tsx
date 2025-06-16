@@ -28,7 +28,7 @@ import { appRoutes } from '@/routes/app-routes';
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login, auth } = useAuth()
+  const { login } = useAuth()
   const { getAll } = useApiHandlers()
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -139,9 +139,6 @@ export function SignInPage() {
     setCaptchaToken(value);
     setError(null)
   }
-
-  console.log("auth=>>>", auth);
-
 
   return (
     <Form {...form}>
