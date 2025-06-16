@@ -24,7 +24,8 @@ import { IApiResponse } from '@/types/global.types';
 import { toast } from 'sonner';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function ResetPasswordPage() {
   const { } = useAuth();
@@ -32,6 +33,8 @@ export function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const sitekey = import.meta.env.VITE_SITE_KEY
@@ -124,9 +127,33 @@ export function ResetPasswordPage() {
                   <FormLabel>
                     New Password <span className="text-red-500">*</span>
                   </FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="Enter new password" {...field} />
-                  </FormControl>
+                  <div className="relative">
+                    <Input
+                      placeholder="Enter new password"
+                      type={passwordVisible ? 'text' : 'password'} // Toggle input type
+                      {...field}
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          mode="icon"
+                          onClick={() => setPasswordVisible(!passwordVisible)}
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        >
+                          {passwordVisible ? (
+                            <Eye className="text-muted-foreground" />
+                          ) : (
+                            <EyeOff className="text-muted-foreground" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        {passwordVisible ? "Hide password" : "Show password"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -141,7 +168,33 @@ export function ResetPasswordPage() {
                     Confirm Password <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Enter confirm password" {...field} />
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter confirm password"
+                        type={confirmPasswordVisible ? 'text' : 'password'} // Toggle input type
+                        {...field}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            mode="icon"
+                            onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          >
+                            {confirmPasswordVisible ? (
+                              <Eye className="text-muted-foreground" />
+                            ) : (
+                              <EyeOff className="text-muted-foreground" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {confirmPasswordVisible ? "Hide password" : "Show password"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

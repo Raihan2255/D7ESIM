@@ -177,7 +177,7 @@ export function SignInPage() {
               </div>
               <div className="relative">
                 <Input
-                  placeholder="Your password"
+                  placeholder="Enter your password"
                   type={passwordVisible ? 'text' : 'password'} // Toggle input type
                   {...field}
                 />
