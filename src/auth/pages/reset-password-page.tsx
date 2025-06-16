@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -22,11 +22,19 @@ import { APP_APIS } from '@/core/apis';
 import { useNavigate, useSearchParams } from 'react-router';
 import { IApiResponse } from '@/types/global.types';
 import { toast } from 'sonner';
+import ReCAPTCHA from "react-google-recaptcha";
+import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 export function ResetPasswordPage() {
   const { } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [searchParams] = useSearchParams()
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const sitekey = import.meta.env.VITE_SITE_KEY
 
   const { create } = useApiHandlers()
   const navigate = useNavigate()
@@ -41,6 +49,10 @@ export function ResetPasswordPage() {
   });
 
   async function onSubmit(values: ResetRequestSchemaType) {
+    if (!captchaToken) {
+      setError("Please complete the captcha.");
+      return;
+    }
     try {
       setIsProcessing(true);
       const uid = searchParams.get("uid")
@@ -69,7 +81,14 @@ export function ResetPasswordPage() {
 
     } finally {
       setIsProcessing(false);
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     }
+  }
+
+  function onCaptchaChange(value: string | null) {
+    setCaptchaToken(value);
+    setError(null)
   }
 
   return (
@@ -81,6 +100,20 @@ export function ResetPasswordPage() {
               Reset Password
             </h1>
           </div>
+
+          {error && (
+            <Alert
+              variant="destructive"
+              appearance="light"
+              onClose={() => setError(null)}
+            >
+              <AlertIcon>
+                <AlertCircle />
+              </AlertIcon>
+              <AlertTitle>{error}</AlertTitle>
+            </Alert>
+          )}
+
 
           <div className="space-y-5">
             <FormField
@@ -114,6 +147,14 @@ export function ResetPasswordPage() {
                 </FormItem>
               )}
             />
+
+            <div className="flex flex-col gap-1">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={sitekey}
+                onChange={onCaptchaChange}
+              />
+            </div>
 
             <Button type="submit" className="w-full" disabled={isProcessing}>
               {isProcessing ? (

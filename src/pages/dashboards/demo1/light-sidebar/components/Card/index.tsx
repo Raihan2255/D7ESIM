@@ -1,11 +1,10 @@
 import dayjs from "dayjs"
 import DetailsModal from "../DetailsModal"
 import { useState } from "react"
-import { CardData } from "../../types"
 
 
 type Props = {
-  item: CardData
+  item: any
 }
 
 export default function Card({ item }: Props) {

@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button'
 import DialogContent, { Dialog, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useApiHandlers } from '@/hooks/useApiHandlers'
 import { IApiResponse } from '@/types/global.types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -33,9 +35,11 @@ type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 export default function ResetPasswordForm({ open, setOpen }: Props) {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const { updateById } = useApiHandlers()
-
 
 
   const form = useForm<ResetPasswordForm>({
@@ -95,7 +99,33 @@ export default function ResetPasswordForm({ open, setOpen }: Props) {
                     Old Password <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter old password" {...field} />
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter old password"
+                        type={passwordVisible ? 'text' : 'password'} // Toggle input type
+                        {...field}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            mode="icon"
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          >
+                            {passwordVisible ? (
+                              <Eye className="text-muted-foreground" />
+                            ) : (
+                              <EyeOff className="text-muted-foreground" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {passwordVisible ? "Hide password" : "Show password"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +141,33 @@ export default function ResetPasswordForm({ open, setOpen }: Props) {
                     New Password <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Enter new password" {...field} />
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter new password"
+                        type={newPasswordVisible ? 'text' : 'password'} // Toggle input type
+                        {...field}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            mode="icon"
+                            onClick={() => setNewPasswordVisible(!newPasswordVisible)}
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          >
+                            {newPasswordVisible ? (
+                              <Eye className="text-muted-foreground" />
+                            ) : (
+                              <EyeOff className="text-muted-foreground" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {newPasswordVisible ? "Hide password" : "Show password"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +183,33 @@ export default function ResetPasswordForm({ open, setOpen }: Props) {
                     Confirm Password <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Enter confirm password" {...field} />
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter confirm password"
+                        type={confirmPasswordVisible ? 'text' : 'password'} // Toggle input type
+                        {...field}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            mode="icon"
+                            onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          >
+                            {confirmPasswordVisible ? (
+                              <Eye className="text-muted-foreground" />
+                            ) : (
+                              <EyeOff className="text-muted-foreground" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {confirmPasswordVisible ? "Hide password" : "Show password"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

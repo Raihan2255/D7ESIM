@@ -85,7 +85,7 @@ export function SignUpPage() {
 
         // Use navigate for navigation
         navigate(appRoutes.verify);
-        toast.success(response?.message)
+        toast.success(response?.message ?? "Check your email for the OTP to verify your account")
 
         // Set success message and metadata
         setSuccessMessage(
