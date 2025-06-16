@@ -37,9 +37,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe?: boolean) => {
     try {
-      const auth = await SupabaseAdapter.login(email, password);
+      const auth = await SupabaseAdapter.login(email, password, rememberMe);
       saveAuth(auth);
       const user = await getUser();
       setCurrentUser(user || undefined);

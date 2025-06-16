@@ -28,7 +28,7 @@ import { appRoutes } from '@/routes/app-routes';
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login } = useAuth()
+  const { login, auth } = useAuth()
   const { getAll } = useApiHandlers()
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -36,10 +36,6 @@ export function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
-  const {
-    auth
-  } = useContext(AuthContext);
 
 
   const recaptchaRef = useRef<ReCAPTCHA>(null);
