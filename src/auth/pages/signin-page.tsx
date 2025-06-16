@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '@/auth/context/auth-context';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { AuthContext, useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -36,6 +36,10 @@ export function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const {
+    auth
+  } = useContext(AuthContext);
 
 
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -109,11 +113,6 @@ export function SignInPage() {
     }
   }
 
-  // const { data: newData } = useQuery({
-  //   queryKey: ["HAVE_DASHBOARD"],
-  //   queryFn: getDashboard,
-  //   refetchOnWindowFocus: false
-  // })
 
   async function onSubmit(values: SigninSchemaType) {
     if (!captchaToken) {
@@ -144,6 +143,9 @@ export function SignInPage() {
     setCaptchaToken(value);
     setError(null)
   }
+
+  console.log("auth=>>>", auth);
+
 
   return (
     <Form {...form}>

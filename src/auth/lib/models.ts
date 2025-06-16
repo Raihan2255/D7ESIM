@@ -8,6 +8,7 @@ export type LanguageCode = 'en' | 'de' | 'es' | 'fr' | 'ja' | 'zh';
 export interface AuthModel {
   access_token: string;
   refresh_token?: string;
+  have_dashboard?: boolean
 }
 
 // User model representing the user profile

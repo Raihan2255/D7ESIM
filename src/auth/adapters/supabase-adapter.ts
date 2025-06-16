@@ -20,7 +20,7 @@ export const SupabaseAdapter = {
   /**
    * Login with email and password
    */
-  async login(email: string, password: string, rememberMe: boolean): Promise<AuthModel> {
+  async login(email: string, password: string, rememberMe?: boolean): Promise<AuthModel> {
     const { create } = useApiHandlers()
 
     try {
@@ -44,7 +44,8 @@ export const SupabaseAdapter = {
 
         return {
           access_token: response?.data?.token,
-          refresh_token: response?.data?.refresh
+          refresh_token: response?.data?.refresh,
+          have_dashboard: response?.data?.user?.have_dashboard
         };
 
       }
@@ -314,6 +315,8 @@ export const SupabaseAdapter = {
       navigate(LOGIN_URL);
       queryClient.clear();
       window.location.reload()
+      auth.clearUserInfo()
+      sessionStorage.clear();
     }
   },
 };
