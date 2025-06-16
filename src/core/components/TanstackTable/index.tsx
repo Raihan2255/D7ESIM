@@ -199,6 +199,11 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
     }
   }, [pagination, searchQuery, sorting, extraParams]);
 
+  useEffect(() => {
+    if (searchQuery) {
+      setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
+    }
+  }, [searchQuery])
 
   return (
     <DataGrid
@@ -225,9 +230,9 @@ export default function TanstackTable<T>({ columns, children, url, queryKey, ext
                 <DebouncedSearchInput
                   onChange={(value) => {
                     setSearchQuery(value)
-                    if (value !== "") {
-                      setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
-                    }
+                    // if (value !== "") {
+                    //   setPagination((prev) => ({ pageIndex: 0, pageSize: prev.pageSize }))
+                    // }
                   }}
                   value={searchQuery}
                 />
