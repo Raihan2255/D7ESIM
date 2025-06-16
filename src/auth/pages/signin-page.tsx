@@ -110,6 +110,7 @@ export function SignInPage() {
       setIsProcessing(false)
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
+      window.location.reload()
     }
   }
 

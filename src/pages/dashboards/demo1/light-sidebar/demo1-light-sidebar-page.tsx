@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import {
   Toolbar,
   ToolbarHeading,
@@ -25,10 +25,7 @@ export function Demo1LightSidebarPage() {
   const getDashboardDatas = async () => {
     try {
       const response = await getAll<IApiResponse<IDashboard[]>>(`${APP_APIS.dashboard}?is_paginated=false`, { requiresAuth: true })
-      if (response?.data?.length === 0 && location?.pathname === "/") {
-        navigate(appRoutes.purchase)
-        return []
-      }
+
       if (response?.data && response?.status) {
         const updatedData = response?.data?.map((item) => ({
           id: item?.id,
@@ -71,6 +68,12 @@ export function Demo1LightSidebarPage() {
     refetchInterval: 15 * 60 * 1000, // 15 minutes
     refetchIntervalInBackground: true,
   })
+
+  useEffect(() => {
+    if (!data) {
+      navigate(appRoutes.purchase)
+    }
+  }, [data])
 
   return (
     <Fragment>

@@ -315,5 +315,6 @@ export const SupabaseAdapter = {
       navigate(LOGIN_URL);
       queryClient.clear();
     }
+    window.location.reload()
   },
 };
