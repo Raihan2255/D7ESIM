@@ -47,7 +47,6 @@ export const SupabaseAdapter = {
           refresh_token: response?.data?.refresh
         };
 
-        // return { 'Login failed: Invalid credentials or unexpected response' };
       }
 
       toast.error(resp?.errors || 'Login failed');
@@ -314,7 +313,7 @@ export const SupabaseAdapter = {
       removeToken()
       navigate(LOGIN_URL);
       queryClient.clear();
+      window.location.reload()
     }
-    window.location.reload()
   },
 };

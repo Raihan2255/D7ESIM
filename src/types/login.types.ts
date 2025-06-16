@@ -3,6 +3,7 @@ export interface User {
   slug: string;
   email: string;
   is_active: boolean;
+  have_dashboard: boolean
 }
 
 export interface Data {

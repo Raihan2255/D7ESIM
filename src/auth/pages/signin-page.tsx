@@ -20,11 +20,16 @@ import { Spinner } from '@/components/ui/spinners';
 import { getSigninSchema, SigninSchemaType } from '../forms/signin-schema';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import ReCAPTCHA from "react-google-recaptcha";
+import { useApiHandlers } from '@/hooks/useApiHandlers';
+import { IApiResponse } from '@/types/global.types';
+import { APP_APIS } from '@/core/apis';
+import { appRoutes } from '@/routes/app-routes';
 
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth()
+  const { getAll } = useApiHandlers()
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -85,6 +90,31 @@ export function SignInPage() {
     },
   });
 
+
+  const getDashboard = async () => {
+    try {
+      const response = await getAll<IApiResponse<any>>(APP_APIS.haveDashboard, { requiresAuth: true })
+      if (response?.data && response?.status) {
+        if (response?.data === "FALSE") {
+          navigate(appRoutes.purchase)
+        } else {
+          const nextPath = searchParams.get('next') || '/';
+
+          // Use navigate for navigation
+          navigate(nextPath);
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  // const { data: newData } = useQuery({
+  //   queryKey: ["HAVE_DASHBOARD"],
+  //   queryFn: getDashboard,
+  //   refetchOnWindowFocus: false
+  // })
+
   async function onSubmit(values: SigninSchemaType) {
     if (!captchaToken) {
       setError("Please complete the captcha.");
@@ -98,19 +128,15 @@ export function SignInPage() {
         return;
       }
       await login(values.email, values.password, values?.rememberMe as boolean);
-
+      getDashboard()
       // Get the 'next' parameter from URL if it exists
-      const nextPath = searchParams.get('next') || '/';
 
-      // Use navigate for navigation
-      navigate(nextPath);
     } catch (error) {
       setIsProcessing(false)
     } finally {
       setIsProcessing(false)
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
-      window.location.reload()
     }
   }
 

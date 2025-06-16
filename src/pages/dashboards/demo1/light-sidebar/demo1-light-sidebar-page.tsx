@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import {
   Toolbar,
   ToolbarHeading,
@@ -14,12 +14,9 @@ import { Globe, MessageSquare, PhoneCall } from 'lucide-react';
 import Card from './components/Card';
 import UsageSkeleton from './components/UsageSkeleton';
 import { IDashboard } from './types';
-import { useNavigate } from 'react-router';
-import { appRoutes } from '@/routes/app-routes';
 
 export function Demo1LightSidebarPage() {
   const { getAll } = useApiHandlers()
-  const navigate = useNavigate()
 
   const getDashboardDatas = async () => {
     try {
@@ -67,11 +64,6 @@ export function Demo1LightSidebarPage() {
     refetchIntervalInBackground: true,
   })
 
-  useEffect(() => {
-    if (!data) {
-      navigate(appRoutes.purchase)
-    }
-  }, [data])
 
   return (
     <Fragment>

@@ -9,5 +9,6 @@ export const APP_APIS = {
   resetPassword: 'api/accounts/password/reset/password',
   forgotPassword: 'api/accounts/password/admin-forgot-password',
   dashboard: 'api/accounts/customers/dashboard',
-  orderUsage: 'api/order/order/usage-details'
+  orderUsage: 'api/order/order/usage-details',
+  haveDashboard: "api/accounts/customers/have-dashboard"
 }
