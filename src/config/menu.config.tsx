@@ -42,7 +42,6 @@ import {
   ShoppingCart,
   SquareMousePointer,
   Star,
-  Theater,
   ThumbsUp,
   TrendingUp,
   UserCheck,
