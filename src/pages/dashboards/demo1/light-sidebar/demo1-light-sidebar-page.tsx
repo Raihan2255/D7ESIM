@@ -14,18 +14,16 @@ import { Globe, MessageSquare, PhoneCall } from 'lucide-react';
 import Card from './components/Card';
 import UsageSkeleton from './components/UsageSkeleton';
 import { IDashboard } from './types';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { appRoutes } from '@/routes/app-routes';
 
 export function Demo1LightSidebarPage() {
   const { getAll } = useApiHandlers()
   const navigate = useNavigate()
-  const location = useLocation()
 
   const getDashboardDatas = async () => {
     try {
       const response = await getAll<IApiResponse<IDashboard[]>>(`${APP_APIS.dashboard}?is_paginated=false`, { requiresAuth: true })
-
       if (response?.data && response?.status) {
         const updatedData = response?.data?.map((item) => ({
           id: item?.id,

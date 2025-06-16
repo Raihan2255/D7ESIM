@@ -147,16 +147,6 @@ export function TopUpListing({ }: Props) {
           headerClassName: '',
         },
       },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) => <></>,
-        enableSorting: false,
-        size: 60,
-        meta: {
-          headerClassName: '',
-        },
-      },
     ],
     [],
   );
