@@ -36,11 +36,10 @@ export function BrandedLayout() {
 
             <div className="flex flex-col gap-3">
               <h3 className="text-2xl font-semibold text-mono">
-                Welcome to Your Dashboard
+                Welcome to the D7 eSIM Account
               </h3>
               <div className="text-base font-medium text-secondary-foreground">
-                Get a quick overview of your account,<br /> recent activity, and personalized insights—all in one place.
-
+                Easily activate, manage, and monitor your eSIM account here.
               </div>
             </div>
           </div>
