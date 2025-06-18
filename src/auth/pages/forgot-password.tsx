@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useApiHandlers } from '@/hooks/useApiHandlers';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { forgotPasswordSchemaType, getForgotPasswordSchema } from '../forms/forgot-password-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,11 +17,19 @@ import { Spinner } from '@/components/ui/spinners';
 import { IApiResponse } from '@/types/global.types';
 import { APP_APIS } from '@/core/apis';
 import { toast } from 'sonner';
+import ReCAPTCHA from "react-google-recaptcha";
+import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 type Props = {}
 
 export default function ForgotPassword({ }: Props) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const sitekey = import.meta.env.VITE_SITE_KEY
 
   const { create } = useApiHandlers()
 
@@ -35,6 +43,10 @@ export default function ForgotPassword({ }: Props) {
 
 
   async function onSubmit(values: forgotPasswordSchemaType) {
+    if (!captchaToken) {
+      setError("Please complete the captcha.");
+      return;
+    }
     try {
       setIsProcessing(true);
       const payload = {
@@ -49,8 +61,16 @@ export default function ForgotPassword({ }: Props) {
       setIsProcessing(false)
     } finally {
       setIsProcessing(false)
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     }
   }
+
+  function onCaptchaChange(value: string | null) {
+    setCaptchaToken(value);
+    setError(null)
+  }
+
 
   return (
     <div className="max-w-md mx-auto">
@@ -62,6 +82,18 @@ export default function ForgotPassword({ }: Props) {
             </h1>
           </div>
 
+          {error && (
+            <Alert
+              variant="destructive"
+              appearance="light"
+              onClose={() => setError(null)}
+            >
+              <AlertIcon>
+                <AlertCircle />
+              </AlertIcon>
+              <AlertTitle>{error}</AlertTitle>
+            </Alert>
+          )}
           <div className="space-y-5">
             <FormField
               control={form.control}
@@ -79,6 +111,14 @@ export default function ForgotPassword({ }: Props) {
               )}
             />
 
+            <div className="flex flex-col gap-1">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={sitekey}
+                onChange={onCaptchaChange}
+              />
+            </div>
+
             <Button type="submit" className="w-full" disabled={isProcessing}>
               {isProcessing ? (
                 <span className="flex items-center gap-2">
@@ -89,15 +129,6 @@ export default function ForgotPassword({ }: Props) {
               )}
             </Button>
           </div>
-
-          {/* <div className="text-center text-sm">
-            <Link
-              to="/auth/signin"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-accent-foreground hover:underline hover:underline-offset-2"
-            >
-              <MoveLeft className="size-3.5 opacity-70" /> Back to Sign In
-            </Link>
-          </div> */}
         </form>
       </Form>
     </div>
