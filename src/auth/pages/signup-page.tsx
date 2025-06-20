@@ -18,7 +18,7 @@ import { Spinner } from '@/components/ui/spinners';
 import { getSignupSchema, SignupSchemaType } from '../forms/signup-schema';
 import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { IApiResponse } from '@/types/global.types';
-import { API_END_POINTS } from '@/apis/api-constants';
+import { API_CONSTANTS, API_END_POINTS } from '@/apis/api-constants';
 import { appRoutes } from '@/routes/app-routes';
 import auth from '@/utils/auth';
 import { toast } from 'sonner';
@@ -101,8 +101,22 @@ export function SignUpPage() {
     }
   }
 
-  function onCaptchaChange(value: string | null) {
-    setCaptchaToken(value);
+  async function onCaptchaChange(value: string | null) {
+    if (!value) return
+    try {
+      const payload = {
+        token: value
+      }
+      const response = await create<IApiResponse<any>>(API_CONSTANTS.captcha, payload)
+      if (response?.status) {
+        setCaptchaToken(value);
+        setError(null)
+      } else {
+        setError(String(response?.message))
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

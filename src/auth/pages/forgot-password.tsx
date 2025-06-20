@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { API_CONSTANTS } from '@/apis/api-constants';
 
 type Props = {}
 
@@ -66,9 +67,22 @@ export default function ForgotPassword({ }: Props) {
     }
   }
 
-  function onCaptchaChange(value: string | null) {
-    setCaptchaToken(value);
-    setError(null)
+  async function onCaptchaChange(value: string | null) {
+    if (!value) return
+    try {
+      const payload = {
+        token: value
+      }
+      const response = await create<IApiResponse<any>>(API_CONSTANTS.captcha, payload)
+      if (response?.status) {
+        setCaptchaToken(value);
+        setError(null)
+      } else {
+        setError(String(response?.message))
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
 
@@ -94,6 +108,8 @@ export default function ForgotPassword({ }: Props) {
               <AlertTitle>{error}</AlertTitle>
             </Alert>
           )}
+
+
           <div className="space-y-5">
             <FormField
               control={form.control}

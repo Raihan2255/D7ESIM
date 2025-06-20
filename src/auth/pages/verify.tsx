@@ -23,8 +23,6 @@ import { toast } from "sonner";
 
 type Props = {}
 
-
-
 export function Verify({ }: Props) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate()

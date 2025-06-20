@@ -35,6 +35,7 @@ export const API_CONSTANTS = {
   shippingSlab: "api/system_configs/shipping-slab",
   profile: "api/profile",
   mediaConfig: "api/core/system-configuration/media",
+  captcha: 'api/accounts/verify-recaptcha'
 };
 export const API_ATTRIBUTES = {
   attributes: "api/admin/settings/attributes",

@@ -24,12 +24,13 @@ import { useApiHandlers } from '@/hooks/useApiHandlers';
 import { IApiResponse } from '@/types/global.types';
 import { APP_APIS } from '@/core/apis';
 import { appRoutes } from '@/routes/app-routes';
+import { API_CONSTANTS } from '@/apis/api-constants';
 
 export function SignInPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth()
-  const { getAll } = useApiHandlers()
+  const { getAll, create } = useApiHandlers()
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -109,7 +110,6 @@ export function SignInPage() {
     }
   }
 
-
   async function onSubmit(values: SigninSchemaType) {
     if (!captchaToken) {
       setError("Please complete the captcha.");
@@ -135,9 +135,22 @@ export function SignInPage() {
     }
   }
 
-  function onCaptchaChange(value: string | null) {
-    setCaptchaToken(value);
-    setError(null)
+  async function onCaptchaChange(value: string | null) {
+    if (!value) return
+    try {
+      const payload = {
+        token: value
+      }
+      const response = await create<IApiResponse<any>>(API_CONSTANTS.captcha, payload)
+      if (response?.status) {
+        setCaptchaToken(value);
+        setError(null)
+      } else {
+        setError(String(response?.message))
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -264,7 +277,7 @@ export function SignInPage() {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isProcessing}>
+        <Button type="submit" className="w-full" disabled={isProcessing || Boolean(error)}>
           {isProcessing ? (
             <span className="flex items-center gap-2">
               <Spinner className="h-4 w-4 animate-spin" /> Loading...
