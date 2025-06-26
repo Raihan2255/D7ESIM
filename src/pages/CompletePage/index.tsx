@@ -112,7 +112,6 @@ export default function CompletePage() {
   const [intentId, setIntentId] = useState<any>();
   const { create } = useApiHandlers()
   const [searchParams] = useSearchParams()
-
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -147,45 +146,36 @@ export default function CompletePage() {
   }
 
   useEffect(() => {
-    if (!stripe) {
-      return;
-    }
+    if (!stripe) return;
 
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
+    const clientSecret =
+      searchParams.get("payment_intent_client_secret") ||
+      new URLSearchParams(window.location.search).get("payment_intent_client_secret");
 
-    if (!clientSecret) {
-      return;
-    }
+    if (!clientSecret) return;
 
-    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      try {
-        if (!paymentIntent) {
-          return;
-        }
-        if (packageId && paymentIntent?.id) {
-          handlePaymentSuccess(packageId as string, paymentIntent?.id)
+    stripe
+      .retrievePaymentIntent(clientSecret)
+      .then(({ paymentIntent }) => {
+        if (!paymentIntent) return;
+
+        if (packageId && paymentIntent.id) {
+          handlePaymentSuccess(packageId, paymentIntent.id);
         }
 
         setStatus(paymentIntent.status);
         setIntentId(paymentIntent.id);
-        localStorage.removeItem("key")
-      } catch (error) {
-        console.error(error)
-      }
-    });
-  }, [stripe]);
-
+        localStorage.removeItem("key");
+      })
+      .catch((error) => {
+        console.error("Error retrieving payment intent:", error);
+      });
+  }, [stripe, packageId, searchParams, handlePaymentSuccess]);
 
 
 
   return (
     <div id="payment-status" className="grid place-items-center">
-      {/* <div id="status-icon" className="size-[30px] grid place-items-center rounded-full" style={{ backgroundColor: STATUS_CONTENT_MAP[status].iconColor }}>
-        {STATUS_CONTENT_MAP[status].icon}
-      </div>
-      <h2 id="status-text">{STATUS_CONTENT_MAP[status].text}</h2> */}
       {STATUS_CONTENT_MAP[status].component}
     </div>
   );

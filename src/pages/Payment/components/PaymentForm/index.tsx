@@ -26,6 +26,7 @@ export default function PaymentForm({ clientSecret, isLoading }: Props) {
   const encryptedId = searchParams.get("package_id")
   const packageId = encryptedId ? decrypt(encryptedId) : null
 
+
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     if (!elements || !stripe) {
