@@ -3,7 +3,7 @@ import { useApiHandlers } from '@/hooks/useApiHandlers'
 import { IApiResponse } from '@/types/global.types';
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PaymentForm from './components/PaymentForm';
 import { useSearchParams } from 'react-router';
 import CompletePage from '../CompletePage';
@@ -46,9 +46,6 @@ export default function Payment({ }: Props) {
   const amount = encryptedAmount ? decrypt(encryptedAmount) : null
   const paymentIntent = searchParams.get("payment_intent")
 
-  // Fetch from localStorage on mount if nothing is in state
-  const storedKey = localStorage.getItem("key")
-
   // useEffect(() => {
   //   if (storedKey) {
   //     setSecretKey(storedKey)
@@ -57,8 +54,6 @@ export default function Payment({ }: Props) {
 
 
   useEffect(() => {
-    console.log("amount =>>>>", amount);
-
     if (amount) {
       handlePay(amount as string)
     }
@@ -71,14 +66,6 @@ export default function Payment({ }: Props) {
   // Enable the skeleton loader UI for optimal loading.
   const loader = 'auto';
 
-  React.useEffect(() => {
-    console.log("secretKey =>>>", secretKey);
-    console.log("paymentIntent =>>>", paymentIntent);
-
-  }, [amount, secretKey, paymentIntent])
-
-  // 💡 Defensive check
-  // if (!secretKey) return <div>Preparing payment...</div>
 
   return (
     <div>

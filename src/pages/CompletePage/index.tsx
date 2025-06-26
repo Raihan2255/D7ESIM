@@ -13,8 +13,7 @@ import ProcessingCard from "./components/ProcessingCard";
 import FailedCard from "./components/FailedCard";
 import { appRoutes } from "@/routes/app-routes";
 import { toast } from "sonner";
-import { decrypt } from "@/utils/helper";
-
+import { PaymentIntent } from "@stripe/stripe-js";
 
 const SuccessIcon =
   <svg width="201" height="200" viewBox="0 0 201 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,23 +114,26 @@ export default function CompletePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  console.log(intentId);
-
+  console.log("intentId =>>", intentId);
 
   const encryptedId = searchParams.get("package_id")
-  const packageId = encryptedId ? decrypt(encryptedId) : null
 
-  const handlePaymentSuccess = async (packageId: string, transactionId: string) => {
+  const handlePaymentSuccess = async (packageId: string, paymentIntent: PaymentIntent) => {
     try {
       const payload = {
         package: packageId,
-        transaction: transactionId
+        transaction: paymentIntent?.id
       }
       const response = await create<IApiResponse<any>>(APP_APIS.packagePurchase, payload, { requiresAuth: true })
       if (!response?.status) {
         toast.error(response?.errors)
+        setStatus("default")
       }
       if (response?.data && response?.status) {
+
+        setStatus(paymentIntent.status);
+        setIntentId(paymentIntent.id);
+        localStorage.removeItem("key");
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.orderHistory] })
 
         // Delay navigation for 3 seconds(3000 ms)
@@ -139,15 +141,12 @@ export default function CompletePage() {
           navigate(appRoutes.orderHistory);
         }, 3000);
       }
-
     } catch (error) {
       console.error(error)
     }
   }
 
   useEffect(() => {
-    if (!stripe) return;
-
     const clientSecret =
       searchParams.get("payment_intent_client_secret") ||
       new URLSearchParams(window.location.search).get("payment_intent_client_secret");
@@ -155,22 +154,17 @@ export default function CompletePage() {
     if (!clientSecret) return;
 
     stripe
-      .retrievePaymentIntent(clientSecret)
-      .then(({ paymentIntent }) => {
+      ?.retrievePaymentIntent(clientSecret)
+      ?.then(({ paymentIntent }) => {
         if (!paymentIntent) return;
-
-        if (packageId && paymentIntent.id) {
-          handlePaymentSuccess(packageId, paymentIntent.id);
+        if (encryptedId && paymentIntent?.id) {
+          handlePaymentSuccess(encryptedId, paymentIntent);
         }
-
-        setStatus(paymentIntent.status);
-        setIntentId(paymentIntent.id);
-        localStorage.removeItem("key");
       })
       .catch((error) => {
         console.error("Error retrieving payment intent:", error);
       });
-  }, [stripe, packageId, searchParams, handlePaymentSuccess]);
+  }, [stripe, encryptedId, searchParams]);
 
 
 
