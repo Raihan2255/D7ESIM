@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import auth from "@/utils/auth";
 import { APP_BASE_URL_KEY, mediaTenancy } from "@/utils/constants";
+import CryptoJS from "crypto-js"
 
 export const rowPerPages = [10, 15, 20, 25, 30, 50, 100, 200];
 export const DATE_FORMAT_DEFAULT = "DD/MM/YYYY";
@@ -149,3 +150,15 @@ export const truncateText = (text: string, maxLength: number): string => {
   if (!text) return '';
   return text.length > maxLength ? text.slice(0, maxLength).trim() + '...' : text;
 };
+
+
+export const AMOUNT_SECRET_KEY = "qnl61a0cfc7843d5a9c6d2e1f5a3c9d8" // Store this securely
+
+export const encrypt = (text: string) => {
+  return CryptoJS.AES.encrypt(text, AMOUNT_SECRET_KEY).toString()
+}
+
+export const decrypt = (cipherText: string) => {
+  const bytes = CryptoJS.AES.decrypt(cipherText, AMOUNT_SECRET_KEY)
+  return bytes.toString(CryptoJS.enc.Utf8)
+}

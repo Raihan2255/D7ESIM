@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Eye } from 'lucide-react'
 import DialogContent, { Dialog } from '@/components/ui/dialog'
 import PlanCard from './components/PlanCard'
+import { encrypt } from '@/utils/helper'
 
 type Props = {}
 
@@ -82,7 +83,10 @@ export default function Packages({ }: Props) {
         cell: ({ row }) => {
           const [open, setOpen] = useState<boolean>(false)
           const handlePaymentNavigation = () => {
-            const url = `/payment?amount=${row?.original?.price}&package_id=${row?.original?.id}`
+            if (!row?.original?.price) return
+            const encryptedAmount = encrypt(row?.original?.price?.toString())
+            const encryptedId = encrypt(row?.original?.id?.toString())
+            const url = `/payment?amount=${encodeURIComponent(encryptedAmount)}&package_id=${encryptedId}`
             navigate(url)
           }
           return (

@@ -13,6 +13,7 @@ import ProcessingCard from "./components/ProcessingCard";
 import FailedCard from "./components/FailedCard";
 import { appRoutes } from "@/routes/app-routes";
 import { toast } from "sonner";
+import { decrypt } from "@/utils/helper";
 
 
 const SuccessIcon =
@@ -118,7 +119,8 @@ export default function CompletePage() {
   console.log(intentId);
 
 
-  const packageId = searchParams.get("package_id")
+  const encryptedId = searchParams.get("package_id")
+  const packageId = encryptedId ? decrypt(encryptedId) : null
 
   const handlePaymentSuccess = async (packageId: string, transactionId: string) => {
     try {

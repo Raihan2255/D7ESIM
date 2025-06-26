@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import PaymentForm from './components/PaymentForm';
 import { useSearchParams } from 'react-router';
 import CompletePage from '../CompletePage';
+import { decrypt } from '@/utils/helper';
 
 type Props = {}
 const pk = import.meta.env.VITE_PK_TEST
@@ -41,7 +42,8 @@ export default function Payment({ }: Props) {
   }
 
 
-  const amount = searchParams.get("amount")
+  const encryptedAmount = searchParams.get("amount")
+  const amount = encryptedAmount ? decrypt(encryptedAmount) : null
   const paymentIntent = searchParams.get("payment_intent")
 
   // Fetch from localStorage on mount if nothing is in state
