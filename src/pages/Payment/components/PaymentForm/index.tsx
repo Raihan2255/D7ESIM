@@ -3,7 +3,7 @@ import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import PaymentFormSkeleton from '../PaymentFormSkeleton';
-import { decrypt } from '@/utils/helper';
+import { decrypt, encrypt } from '@/utils/helper';
 
 type Props = {
   clientSecret: string
@@ -32,11 +32,11 @@ export default function PaymentForm({ clientSecret, isLoading }: Props) {
       return
     }
     setIsSubmitting(true)
+
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${REDIRECT_URL}payment?package_id=${packageId}`,
-        // return_url: `http://localhost:5173/payment?package_id=${packageId}`
+        return_url: `${REDIRECT_URL}payment?package_id=${packageId}&amount=${encodeURIComponent(encrypt(String(amount)))}`,
       }
     })
     setIsSubmitting(false)
@@ -63,6 +63,7 @@ export default function PaymentForm({ clientSecret, isLoading }: Props) {
       // Use it if needed, then clean the URL
       const url = new URL(window.location.href);
       url.searchParams.delete("payment_intent");
+      url.searchParams.delete("amount");
       window.history.replaceState({}, "", url.toString());
     }
   }, []);
